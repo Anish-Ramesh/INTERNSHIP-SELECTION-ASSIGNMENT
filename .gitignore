@@ -1,2 +1,27 @@
+# Secrets
 .env
+
+# Personal Scratch Scripts
 a.py
+test_bm25.py
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Local Data & Databases
+data/*.db
+data/database.db
+
+# Large raw datasets (Keep only the processed movies_structured.csv)
+dataset/rotten_tomatoes_movies.csv
+dataset/top1000movies.csv
+
+# Evaluation Logs
+evaluation/logs/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
