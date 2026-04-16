@@ -1,0 +1,18 @@
+{
+    "timestamp": "2026-04-16T20:19:26.793778",
+    "question": "Test question?",
+    "steps": [
+        {
+            "step_number": 1,
+            "tool_name": "test_tool",
+            "input": "input",
+            "output": "output"
+        }
+    ],
+    "final_answer": "Final Answer",
+    "citations": [
+        "citation 1"
+    ],
+    "number_of_steps": 1,
+    "refused": false
+}
