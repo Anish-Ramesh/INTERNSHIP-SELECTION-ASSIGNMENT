@@ -1,2 +1,11 @@
-movie: Black Panther
-review: Black Panther elevates superhero cinema to thrilling new heights while telling one of the MCU's most absorbing stories -- and introducing some of its most fully realized characters.
+Movie: Black Panther
+Review: The 2018 film Black Panther is widely regarded by critics as a landmark achievement in the superhero genre. It holds a 97% "Fresh" rating on Rotten Tomatoes and was the first superhero film to be nominated for Best Picture at the Academy Awards.
+
+Critical Consensus
+Reviewers praised the film for moving beyond standard Marvel tropes to deliver a deeply personal family saga and political drama.
+
+Direction and Vision: Critics from The New York Times and Variety lauded director Ryan Coogler for infusing the Marvel template with an "auteurist twist".
+
+Standout Performances: Chadwick Boseman was celebrated for his stoic and regal portrayal of T’Challa, while Michael B. Jordan is frequently cited as one of the MCU's most compelling and sympathetic villains.
+
+Cultural Significance: The film’s "Afrofuturist" aesthetic was hailed as revolutionary. Its portrayal of Wakanda as an uncolonised, technologically advanced African nation challenged decades of cinematic stereotypes.

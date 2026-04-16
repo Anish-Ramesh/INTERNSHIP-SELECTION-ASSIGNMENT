@@ -1,2 +1,15 @@
-movie: Titanic
-review: A mostly unqualified triumph for James Cameron, who offers a dizzying blend of spectacular visuals and old-fashioned melodrama.
+Movie: Titanic
+Review: The Review
+The critical consensus describes the film as a "dizzying blend of spectacular visuals and old-fashioned melodrama".
+
+The Highs: Technical Prowess & Emotional Power
+The film is a "technical marvel" that set a new standard for Hollywood ambition. James Cameron’s commitment to authenticity—including using actual footage of the wreck and building a nearly full-scale replica of the ship—resulted in a "definitive visualization" of history. The chemistry between Leonardo DiCaprio and Kate Winslet is consistently praised as "pitch-perfect," transforming a routine love story into an inseparable bond that intensifies the tragedy of the sinking.
+
+The Lows: Scripting & "Dated" Dialogue
+The most common criticism focuses on the screenplay, which some reviewers called "corny" or "tacky". The "villainous" portrayal of Cal (Billy Zane) was noted by some as being "beyond parody" or "cartoonish". Additionally, while the practical effects are "exquisite," some 25th-anniversary reviews noted that certain wide-shot CGI passengers now appear "ropey" or "aging".
+
+The Framing Device: Present vs. Past
+The modern-day framing story involving Brock Lovett (Bill Paxton) received mixed reactions. Some critics found it a "needless padding" that broke the immersion of the historical drama, while it has been defended as a necessary way to connect the audience to the "palpable and poignant" intervening years.
+
+The Sinking: "Heart-Wrenching Spectacle"
+The final 100 minutes of the film are widely regarded as a "thrilling survival story". Reviewers highlighted the "extraordinary" payoff of seeing how different passengers behaved during the sinking, moving from the "stunning" ship break-up to the "ghostly underwater finale".

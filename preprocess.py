@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import glob
 
 def clear_directory(folder_path):
     if os.path.exists(folder_path):
@@ -7,7 +8,9 @@ def clear_directory(folder_path):
             file_path = os.path.join(folder_path, filename)
             try:
                 if os.path.isfile(file_path):
-                    os.unlink(file_path)
+                    # DO NOT DELETE .txt files, we want to preserve them per user instruction
+                    if not filename.endswith('.txt'):
+                        os.unlink(file_path)
             except Exception as e:
                 pass
     else:
@@ -29,6 +32,8 @@ def main():
         primary_col_title = 'Title'
         primary_col_gross = 'Gross'
         primary_col_rating = 'rottenRating'
+        primary_col_year = 'Year'
+        primary_col_genre = 'Genre'
         
         secondary_col_title = 'movie_title'
         secondary_col_review = 'critics_consensus'
@@ -57,6 +62,8 @@ def main():
         merged['computed_rating'] = merged[primary_col_rating]
         merged['computed_review'] = merged[secondary_col_review]
         merged['computed_title'] = merged[primary_col_title]
+        merged['computed_year'] = merged[primary_col_year]
+        merged['computed_genre'] = merged[primary_col_genre]
 
     elif choice == '2':
         print("\n--- Custom Separate Datasets ---")
@@ -94,6 +101,8 @@ def main():
         merged['computed_rating'] = merged['rotten_rating']
         merged['computed_review'] = merged['movie_review']
         merged['computed_title'] = merged['movie title']
+        merged['computed_year'] = merged.get('Year', '')
+        merged['computed_genre'] = merged.get('Genre', '')
 
     elif choice == '3':
         print("\n--- Single Preprocessed Dataset ---")
@@ -121,10 +130,26 @@ def main():
         merged['computed_rating'] = merged['rotten_rating']
         merged['computed_review'] = merged['movie_review']
         merged['computed_title'] = merged['movie title']
+        merged['computed_year'] = merged.get('Year', '')
+        merged['computed_genre'] = merged.get('Genre', '')
         
     else:
         print("Invalid choice. Exiting.")
         return
+
+    # To satisfy user requirements: we must prioritize the ~15 movies that already have txt files in "unstructured_reviews"
+    unstructured_dir = 'dataset/unstructured_reviews'
+    existing_txts = []
+    if os.path.exists(unstructured_dir):
+        for f in glob.glob(os.path.join(unstructured_dir, '*.txt')):
+            existing_txts.append(os.path.basename(f).replace('.txt', '').replace('_', ' ').lower())
+
+    def get_safe_title(title):
+        return str(title).replace(':', '').replace('/', '_').replace('?', '').replace('*', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+
+    # Create a sort key column: 0 if movie already has a txt file, 1 otherwise
+    merged['_sort_key'] = merged['computed_title'].apply(lambda t: 0 if get_safe_title(t).lower() in existing_txts else 1)
+    merged = merged.sort_values(by='_sort_key').drop(columns=['_sort_key'])
 
     print("\n------------------------------")
     num_files_str = input("How many text files should be generated for the unstructured data? [15]: ").strip()
@@ -135,6 +160,8 @@ def main():
     # Write structured CSV
     structured_df = pd.DataFrame()
     structured_df['Title'] = merged['computed_title']
+    structured_df['Year'] = merged['computed_year']
+    structured_df['Genre'] = merged['computed_genre']
     structured_df['budget'] = merged['computed_budget']
     structured_df['opening weekend'] = merged['computed_week_open']
     structured_df['worldwide gross'] = merged['computed_gross']
@@ -148,30 +175,32 @@ def main():
         print(f"Skipped saving {structured_path} as it is open or permission is denied (left as is).")
 
     # Generate Unstructured Reviews
-    unstructured_dir = 'dataset/unstructured_reviews'
     clear_directory(unstructured_dir)
     os.makedirs(unstructured_dir, exist_ok=True)
     
     files_created = 0
+    files_kept = 0
     for index, row in merged.iterrows():
-        if files_created >= num_files_to_generate:
+        if (files_created + files_kept) >= num_files_to_generate:
             break
             
         title = row['computed_title']
         cc = row['computed_review']
         txt_content = f"movie: {title}\nreview: {cc}\n"
         
-        safe_title = str(title).replace(':', '').replace('/', '_').replace('?', '').replace('*', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+        safe_title = get_safe_title(title)
         file_path = os.path.join(unstructured_dir, f"{safe_title}.txt")
         
-        file_existed = os.path.exists(file_path)
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(txt_content)
-            
-        if not file_existed:
+        if os.path.exists(file_path):
+            files_kept += 1
+            # DO NOT OVERWRITE if it exists! We want to keep the long detailed ones.
+            # But we consider it as part of our `num_files_to_generate` quota.
+        else:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(txt_content)
             files_created += 1
 
-    print(f"Created {files_created} text files in {unstructured_dir} directory.")
+    print(f"Created {files_created} new text files, kept {files_kept} existing text files in {unstructured_dir} directory.")
     print("Done!")
 
 if __name__ == "__main__":

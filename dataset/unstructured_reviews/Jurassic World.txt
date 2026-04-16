@@ -1,2 +1,15 @@
-movie: Jurassic World
-review: Jurassic World can't match the original for sheer inventiveness and impact, but it works in its own right as an entertaining -- and visually dazzling -- popcorn thriller.
+Movie: Jurassic World
+Review: The Final Verdict: Jurassic World (2015)
+Jurassic World is widely considered the first "true" successor to the 1993 original, successfully rebooting the franchise by fulfilling the long-held fan wish of seeing a fully operational dinosaur theme park. While critics noted that it lacks the "slow-burn suspense" and "soul" of Spielberg's masterpiece, it was hailed as a top-tier popcorn blockbuster that prioritises spectacle, nostalgia, and high-octane fun. It is an "adrenaline-fuelled piece of controlled carnage" that effectively modernised the series for a new generation.
+
+The Review
+The critical consensus describes the film as a "raucous, brilliantly assembled spectacle" that compensates for its thin character writing with sheer entertainment value.
+
+The Highs: Spectacle and Nostalgia
+The film’s greatest strength is its "visual thrills" and meta-commentary on the blockbuster industry itself—creating the Indominus Rex because audiences are "bored" of regular dinosaurs. Critics lauded the "breathtaking" scale of the park and the climactic "tag-team" dinosaur battle, which many fans felt was the "conciliatory end" the franchise deserved after previous lacklustre sequels. The score by Michael Giacchino, which expertly weaves in John Williams' iconic themes, was cited as "perfection".
+
+The Lows: Character "Clichés" and Logic Gaps
+The most frequent criticism focused on the "one-dimensional" human characters. While Chris Pratt was praised for his charisma, some found his "Indiana Jones-lite" persona a bit flat. A major point of critical ridicule was Bryce Dallas Howard's character fleeing dinosaurs in high heels, which was described as "tonally inappropriate" and a "throwback to 1960s macho adventure pictures". Additionally, the "military weaponization" subplot was often dismissed as "nonsensical" and "forced".
+
+The Technical Shift: CGI Over Animatronics
+While the CGI was called "lifelike" and "stunning," a vocal group of critics and fans missed the tactile realism of the original’s practical effects. The dinosaurs were sometimes described as feeling "weightless" compared to the animatronic stars of the 90s, though the "meaty" action sequences generally satisfied the summer audience's appetite for destruction.

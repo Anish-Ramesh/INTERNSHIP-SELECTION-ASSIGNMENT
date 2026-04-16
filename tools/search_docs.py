@@ -40,18 +40,22 @@ class DocSearchTool:
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
                 
-                # Extract movie name and review text for better metadata display
                 movie_name = ""
                 review_text = ""
-                lines = content.split("\n")
-                for line in lines:
+                
+                # Enhanced parsing for multiline reviews
+                lines = content.splitlines()
+                for i, line in enumerate(lines):
                     if line.lower().startswith("movie:") or line.lower().startswith("name:"):
                         movie_name = line.split(":", 1)[1].strip()
                     elif line.lower().startswith("review:"):
-                        review_text = line.split(":", 1)[1].strip()
+                        # Get the rest of the line and all subsequent lines
+                        first_line_part = line.split(":", 1)[1].strip()
+                        remaining_lines = "\n".join(lines[i+1:])
+                        review_text = (first_line_part + "\n" + remaining_lines).strip()
+                        break
                 
                 if not movie_name:
-                    # Fallback to filename if no 'movie:' line
                     movie_name = os.path.basename(file_path).replace(".txt", "").replace("_", " ")
 
                 if not review_text:
@@ -144,6 +148,10 @@ class DocSearchTool:
                 continue
                 
             doc = filtered_docs[idx]
+            # TRUNCATION OPTIMIZATION: Ensure we don't blow out the 8k limits
+            if len(doc) > 1200:
+                doc = doc[:1200] + "\n...[truncated for length]"
+            
             meta = filtered_meta[idx]
             results.append(f"[Source: {meta['source']}, Page: {meta['page']}]\n{doc}")
             

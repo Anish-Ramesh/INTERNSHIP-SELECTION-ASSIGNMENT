@@ -11,8 +11,8 @@ def ingest_structured_data(csv_path, db_path):
     df = pd.read_csv(csv_path)
     
     # We will rename columns to be more SQL friendly before inserting
-    # Title, budget, opening weekend, worldwide gross, Rotten Tomatoes score
-    df.columns = ["title", "budget", "opening_weekend", "worldwide_gross", "rotten_tomatoes_score"]
+    # Title, Year, Genre, budget, opening weekend, worldwide gross, Rotten Tomatoes score
+    df.columns = ["title", "year", "genre", "budget", "opening_weekend", "worldwide_gross", "rotten_tomatoes_score"]
     
     # Ensure directory exists if there is a dirname
     db_dir = os.path.dirname(db_path)

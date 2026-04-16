@@ -1,2 +1,14 @@
-movie: Furious 7
-review: Serving up a fresh round of over-the-top thrills while adding unexpected dramatic heft, Furious 7 keeps the franchise moving in more ways than one.
+Movie: Furious 7
+Review: Furious 7 is a towering achievement in the action genre, celebrated as a "magnificently stupid" blockbuster that succeeds through sheer heart and high-octane spectacle. While its plot is often described as a "wild mess," the film is universally praised for its breathtaking stunts and its deeply moving, classily handled farewell to the late Paul Walker. It stands as one of the best entries in the franchise, proving that even a "brainless" action movie can resonate on a profound emotional level.
+
+The Review
+Critics view the film as a bittersweet triumph that manages to balance its identity as a "reality-defying" action epic with a sincere, elegiac tone.
+
+The Highs: Adrenaline and Emotion
+Director James Wan is credited with infusing the series with fresh energy, delivering some of the most iconic "gravity-defying" moments in cinema, such as the car jump between the Etihad Towers in Abu Dhabi. The addition of Jason Statham as the villain Deckard Shaw was hailed as a masterstroke, bringing a "menacing appearance" that heightened the stakes. Above all, the final tribute—a montage set to the song "See You Again"—was lauded as an "unexpectedly graceful" send-off that left even the most cynical critics "teary-eyed".
+
+The Lows: Plot and Pacing
+The primary criticism focuses on the "cluttered" and "unnecessary" subplots, particularly the "God's Eye" surveillance thread, which some reviewers felt was poorly presented. At over two hours, the film's "frenetic pace" was noted to flag in the final act, with the massive L.A. battle being described by some as "overthought" and "exhausting". Additionally, critics pointed out the series' continued "objectification of women" through its camera work, despite having strong female leads.
+
+The Technical Wizardry: Recreating Walker
+Reviewers were nearly unanimous in their praise for the "seamless" CGI and trickery used to complete Paul Walker's unfinished scenes. Using his brothers as stand-ins and digital overlays from Weta Digital, the filmmakers were said to have "nailed" the recreation in a way that never felt morbid or insincere.

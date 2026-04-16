@@ -1,2 +1,12 @@
-movie: The Lion King
-review: While it can take pride in its visual achievements,The Lion King is a by-the-numbers retelling that lacks the energy and heart that made the original so beloved--though for some fans that may just be enough.
+Movie: The Lion King
+Review: The Final Verdict: The Lion King (1994)
+The original film remains a crowning jewel in the Disney vault, holding a 93% "Certified Fresh" rating on Rotten Tomatoes. Critics hail it as an "animation masterpiece" that perfectly balances Shakespearean tragedy with vibrant musical joy. It is widely considered one of the best animated films ever made, defined by its expressive characters and high emotional stakes.
+
+The Highs: Emotional Depth & Voice Work
+The hand-drawn animation allows for a level of facial expression that creates a deep, visceral connection with the audience. Reviewers consistently praise the iconic voice performances, particularly James Earl Jones as Mufasa and Jeremy Irons as the "top-tier" villain Scar.
+
+The Music: A Cultural Milestone
+The collaboration between Elton John, Tim Rice, and Hans Zimmer is viewed as "legendary". Songs like "Circle of Life" and "Hakuna Matata" are considered "catchy" and "memorable" classics that enhance the storytelling.
+
+The Lows: Tone and Content for Kids
+Some critics noted that the film's "surprising seriousness" and themes of guilt and betrayal could be frightening for very young children, despite its G-rating.

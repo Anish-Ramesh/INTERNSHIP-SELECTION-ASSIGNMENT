@@ -1,2 +1,14 @@
-movie: Jurassic World: Fallen Kingdom
-review: Jurassic World: Fallen Kingdom adds another set piece-packed entry to the blockbuster franchise, although genuinely thrilling moments are in increasingly short supply.
+Movie: Jurassic World Fallen Kingdom
+Review: Jurassic World: Fallen Kingdom is a divisive entry that effectively splits the franchise into two distinct halves: a high-stakes disaster movie and a claustrophobic gothic horror. While critics universally lauded director J.A. Bayona for bringing a darker, more visually sophisticated style to the series, the film was heavily criticised for a "preposterous" screenplay and a reliance on logic-defying plot twists. It is a film that offers spectacular "dinosaur mayhem" but often lacks the narrative soul or thematic depth of the original 1993 masterpiece.
+
+The Review
+The critical consensus describes the film as a "technically impressive but narratively hollow" ride that focuses more on setting up a sequel than telling a cohesive story.
+
+The Highs: Direction and Visual Spectacle
+Critics were almost unanimous in their praise for Bayona’s direction. His background in horror is evident in the second half of the film, which turns a sprawling estate into a "haunted house with dinosaurs". Reviewers noted that the Indoraptor was a genuinely terrifying creation and that the opening sequence—a volcanic eruption on Isla Nublar—was one of the most thrilling in franchise history. The use of animatronics alongside CGI was cited as a major improvement, giving the dinosaurs a sense of weight and "visceral reality" they lacked in the previous installment.
+
+The Lows: Script and Logic Gaps
+The screenplay by Colin Trevorrow and Derek Connolly received the brunt of the criticism. Reviewers called out the "lazy writing" and "cartoonish villains". A major sticking point for many was a late-game plot twist involving a character's origin, which was described as "way too philosophical" for a blockbuster about lizards biting people’s heads off. Additionally, the human characters—aside from the reliably charismatic Chris Pratt and Bryce Dallas Howard—were often dismissed as one-dimensional "filler".
+
+The "Bridge" Problem
+A common complaint among critics was that the film felt like a "feature-length prologue" for the third movie rather than a self-contained story. While the ending was praised for being "brave" and "game-changing," the journey to get there was seen as a repetitive retread of The Lost World: Jurassic Park.

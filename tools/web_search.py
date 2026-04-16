@@ -53,6 +53,10 @@ class WebSearchTool:
                 title = res.get("title", "No Title")
                 url = res.get("url", "No URL")
                 snippet = res.get("content", "No content")
+                # TRUNCATION OPTIMIZATION: Keep snippets concise for context window
+                if len(snippet) > 800:
+                    snippet = snippet[:800] + "... [truncated]"
+                
                 pub_date = res.get("published_date", "Date not available") 
                 
                 # Structured cleanly for the LLM to read and cite

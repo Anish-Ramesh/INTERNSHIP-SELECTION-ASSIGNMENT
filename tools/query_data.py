@@ -15,6 +15,8 @@ class QueryDataTool:
         
         The database contains a table named 'movies' with the following schema:
         - title (TEXT)
+        - year (INTEGER or TEXT)
+        - genre (TEXT)
         - budget (TEXT)
         - opening_weekend (REAL)
         - worldwide_gross (REAL)
@@ -45,6 +47,11 @@ class QueryDataTool:
             
             if df.empty:
                 return "Query executed successfully but returned no results."
+                
+            # TRUNCATION OPTIMIZATION: Max 10 rows returned to prevent LLM context 8k limit overflow 
+            if len(df) > 10:
+                df = df.head(10)
+                return df.to_markdown(index=False) + "\n\n...(Output truncated to first 10 rows for brevity limit)."
                 
             return df.to_markdown(index=False)
             

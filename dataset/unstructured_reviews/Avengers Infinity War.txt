@@ -1,2 +1,25 @@
-movie: Avengers: Infinity War
-review: Avengers: Infinity War ably juggles a dizzying array of MCU heroes in the fight against their gravest threat yet, and the result is a thrilling, emotionally resonant blockbuster that (mostly) realizes its gargantuan ambitions.
+Movie: Avengers Infinity War
+Review: While Avengers: Endgame was a celebratory "victory lap," the Russo brothers’ Avengers: Infinity War (2018) is widely regarded as a darker, more streamlined "villain’s journey." It is often cited as the better-paced film, operating with a sense of "unrelenting dread" that subverted the typical superhero formula.
+
+The Thanos Study: A Protagonist in Reverse 
+The most striking element of Infinity War is its structure: it is effectively a "Thanos movie" where the Avengers are the antagonists trying to stop him.
+
+The Hero’s Journey Arc: Critics note that Thanos follows a traditional hero’s path—he faces challenges, makes personal sacrifices (most notably Gamora), and ultimately achieves his goal. This framing made him the most "compelling and empathetic" villain in the MCU to date.
+
+Ideological Depth: Unlike typical "evil for evil's sake" villains, Thanos was presented with a "plausible rationale" for his crusade. Reviewers highlight that viewers were often left "questioning his ideology" even as they rooted against his methods.
+
+The "Watered Down" Contrast: In retrospect, many fans and critics argue that the Endgame version of Thanos felt like a "regression" to a standard genocidal maniac, whereas the Infinity War version possessed a "philosophical depth" and calm intensity that made him terrifying.
+
+Technical Mastery: The Masquerade of Emotion
+The film represented a significant leap in "photo-real performance capture," specifically through the character of Thanos.
+
+Subtle Animation: To translate Josh Brolin’s performance, Digital Domain used a high-res facial capture system called Masquerade. This allowed the digital character to mirror "every subtle twitch" and "inner turmoil" from Brolin's onset work, moving away from the "wooden" CGI of earlier eras.
+
+Visual Dynamics: Unlike the "grey and uniform" look of previous Russo films, reviewers praised Infinity War for its "vibrant, freewheeling palette". From the neon bioluminescence of Knowhere to the orange-hued ruins of Titan, the film is visually more "striking and imaginative" than the more grounded Endgame.
+
+The Ending: A Cultural Trauma
+The "Snap" is considered one of the most daring endings in blockbuster history, famously leaving test audiences in "total silence".
+
+Subverting Expectations: By ending on a "depressing note," Marvel proved critics wrong about its reluctance to embrace dark themes. The shock of seeing major icons like Black Panther and Spider-Man disintegrate provided an "emotional wrench" that defined the 2018 moviegoing experience.
+
+Pacing and Stakes: Unlike Endgame, which features a slower middle act, Infinity War maintains a "razor-sharp focus" and high stakes from the first ten minutes. There was a pervasive sense of "foreboding" that critics

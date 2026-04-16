@@ -48,3 +48,29 @@ class TraceLogger:
             json.dump(self.current_trace, f, indent=4)
             
         return filepath
+
+    def print_terminal_trace(self):
+        if not self.current_trace:
+            return
+            
+        print("\n" + "="*60)
+        print("AGENT TRACE LOG")
+        print("="*60)
+        print(f"Question: {self.current_trace['question']}")
+        
+        for step in self.current_trace["steps"]:
+            # Truncate output slightly for terminal readability, but keep it generous 
+            out_str = step['output']
+            if len(out_str) > 1000:
+                out_str = out_str[:1000] + "... [TRUNCATED]"
+            print(f"Step {step['step_number']}: tool={step['tool_name']} input='{step['input']}'")
+            print(f" result={out_str}")
+            
+        print(f"Final Answer: {self.current_trace['final_answer']}")
+        
+        # Format citations simply as a comma separated list
+        citations = ", ".join(self.current_trace.get("citations", [])) or "None"
+        print(f"Citations: {citations}")
+        print(f"Steps used: {self.current_trace['number_of_steps']} / 8 max")
+        print("="*60 + "\n")
+
