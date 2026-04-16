@@ -1,0 +1,2 @@
+movie: Frozen
+review: Beautifully animated, smartly written, and stocked with singalong songs, Frozen adds another worthy entry to the Disney canon.

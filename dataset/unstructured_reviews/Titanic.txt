@@ -1,0 +1,2 @@
+movie: Titanic
+review: A mostly unqualified triumph for James Cameron, who offers a dizzying blend of spectacular visuals and old-fashioned melodrama.

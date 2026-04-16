@@ -1,0 +1,2 @@
+movie: The Lion King
+review: While it can take pride in its visual achievements,The Lion King is a by-the-numbers retelling that lacks the energy and heart that made the original so beloved--though for some fans that may just be enough.

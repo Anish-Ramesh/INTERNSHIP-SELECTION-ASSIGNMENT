@@ -1,0 +1,2 @@
+movie: The Avengers
+review: A TV spinoff that lacks enough energy to spin, The Avengers is an ineptly written, woefully miscast disaster.

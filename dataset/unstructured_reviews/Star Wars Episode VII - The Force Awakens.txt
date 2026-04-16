@@ -1,0 +1,2 @@
+movie: Star Wars: Episode VII - The Force Awakens
+review: Packed with action and populated by both familiar faces and fresh blood, The Force Awakens successfully recalls the series' former glory while injecting it with renewed energy.

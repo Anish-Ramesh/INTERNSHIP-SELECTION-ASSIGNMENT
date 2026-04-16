@@ -1,0 +1,2 @@
+movie: Avatar
+review: It might be more impressive on a technical level than as a piece of storytelling, but Avatar reaffirms James Cameron's singular gift for imaginative, absorbing filmmaking.
