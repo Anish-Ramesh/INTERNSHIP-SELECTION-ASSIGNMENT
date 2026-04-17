@@ -4,6 +4,7 @@
 # Personal Scratch Scripts
 a.py
 test_bm25.py
+task_SOTA_test.py
 
 # Python Cache
 __pycache__/

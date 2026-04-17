@@ -14,7 +14,7 @@ from azure.ai.inference.models import (
 )
 from azure.core.credentials import AzureKeyCredential
 
-from tools.search_docs import search_docs
+from tools.search_docs import search_docs, tokenize
 from tools.query_data import query_data
 from tools.web_search import web_search
 from utils.logger import TraceLogger
@@ -98,20 +98,43 @@ You have three tools available:
 
 Constraints:
 - **MAXIMUM STEPS**: You are strictly limited to a maximum of 8 tool calls per inquiry.
-- **STRICT GROUNDING**: Base your answer ONLY on the provided tool outputs. Do not add themes, facts, or details (e.g., environmentalism, colonialism) unless they are explicitly stated in the retrieved text.
+- **STRICT GROUNDING**: Base your answer ONLY on the provided tool outputs. Do not add outside knowledge or "manual corrections."
+- **CLEAN OUTPUT**: Your final response to the user must ONLY contain the direct answer and citations. NEVER include internal THOUGHT or PLAN blocks in the final answer.
 
 Guidelines:
-- **INITIAL FEASIBILITY ASSESSMENT**: Before invoking any tools, analyze the user's request. If the request explicitly asks to exceed the 8-step limit (e.g., "loop 10 times"), or if you estimate the task will logically require more than 8 calls, you must refuse the request immediately, explain that it violates your operational constraints, and terminate without calling any tools.
-- **MULTI-TOOL REASONING**: Many questions require combining information from multiple tools. Identify these cases early. For example, if asked for themes of the highest grossing movie, find the movie title using `query_data` first, then use `search_docs` for the themes.
-- **MISSING DATA**: If a tool returns no data or a NULL field (e.g., budget is missing), state clearly and professionally that "The [field] information is not available in our dataset" rather than saying you cannot answer the entire question.
-- **CITATIONS**: ALWAYS cite your sources for every substantive claim using the exact format:
-    - `[Source: filename.txt, Page: X]` for documents.
-    - `[Web Source X]` for web results.
-    - `[Table: movies, Row: {title}]` for structured database data.
-- **COMPOSITION**: Compose a final unified answer that draws on all relevant sources and clearly attributes which part came from which source.
-- If you hit a roadblock, the tools return empty data, or you cannot confidently answer after checking all sources, output a clear refusal describing what is missing. Do NOT guess or hallucinate.
-- Do not call the same tool with the exact same input if it has already failed.
+- **THOUGHT & PLAN**: For intermediate reasoning, provide:
+    - `THOUGHT`: Analyze your Knowledge Base. If it contains the info, skip tools.
+    - `PLAN`: List remaining steps.
+- **SQL LOGIC**: When calculating totals for the whole dataset, do NOT use `GROUP BY` unless specifically asked to break down by category. Use `SELECT SUM(column) FROM movies` for global totals.
+- **CITATIONS**: Use ONLY these three formats:
+    - `[Source: filename.txt, Page: X]`
+    - `[Web Source X]`
+    - `[Table: movies, Row: {title}]`
+    - NEVER invent formats like "[Source: query_data tables]".
+- **DATA RECOVERY**: If a database query or document search returns a NULL, empty, or missing value for a requested field (e.g., budget, lead actor), DO NOT terminate. Proactively use `web_search` to find the missing info and complete the reasoning or comparison as requested.
+- **DEDUPLICATION**: Do not repeat semantically similar searches. If you have "Avatar themes," you already have "themes of Avatar."
 """
+
+# SOTA Deduplication Stop Words
+AGENT_STOP_WORDS = {
+    "movie", "movies", "film", "films", "search", "find", "get", "show", "series", "info", 
+    "information", "details", "data", "list", "identify", "tell", "check", "looking"
+}
+
+def clean_final_answer(text: str) -> str:
+    """Strip internal reasoning blocks (THOUGHT, PLAN, etc.) from the final user response."""
+    # Remove THOUGHT:, PLAN: and any intermediate Answer: tags that leak into the final text
+    text = re.sub(r"(?i)THOUGHT:.*?(PLAN:.*?|(?=Answer:|$))", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)PLAN:.*?(?=Answer:|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)Answer:\s*", "", text).strip()
+    return text
+
+def normalize_output(result: any, max_len: int = 2000) -> str:
+    """Clean and truncate tool outputs for the context layer."""
+    clean = str(result).strip()
+    if len(clean) > max_len:
+        return clean[:max_len] + "\n...[truncated for context]"
+    return clean
 
 def extract_citations(text: str) -> list:
     """Extract granular citation identifiers from the final answer text."""
@@ -131,6 +154,14 @@ def run_agent(question: str) -> str:
     logger = TraceLogger()
     logger.start_trace(question)
     
+    # SOTA Context Layer
+    context_state = {
+        "structured": [],
+        "unstructured": [],
+        "web": [],
+        "used_normalized_queries": set() # Format: (tool_name, frozenset_keywords)
+    }
+    
     messages = [
         SystemMessage(content=SYSTEM_PROMPT),
         UserMessage(content=question)
@@ -139,30 +170,46 @@ def run_agent(question: str) -> str:
     step_count = 0
     max_steps = 8
     
-    # Core loop (must be under 100 lines)
     while step_count < max_steps:
+        # Step Budget Awareness & Knowledge Consolidation
+        remaining = max_steps - step_count
+        
+        # Consolidation: Merge findings into a clean perspective
+        merged_structured = " | ".join(list(set(context_state["structured"])))
+        merged_unstructured = "\n---\n".join(list(set(context_state["unstructured"])))
+        merged_web = "\n".join(list(set(context_state["web"])))
+        
+        curated_context = (
+            f"REMAINING TOOL CALLS: {remaining}\n"
+            f"KNOWLEDGE BASE SO FAR:\n"
+            f"DATABASE FACTS: {merged_structured if merged_structured else 'None'}\n"
+            f"REVIEW THEMES: {merged_unstructured[:1000] if merged_unstructured else 'None'}\n"
+            f"WEB NEWS: {merged_web[:500] if merged_web else 'None'}\n"
+            f"IMPORTANT: If the themes/facts you need are already listed above, DO NOT call the tools again. Use the context to answer directly."
+        )
+        
+        # Inject curated context
+        temp_messages = messages + [SystemMessage(content=curated_context)]
+        
         try:
             response = client.complete(
-                messages=messages,
+                messages=temp_messages,
                 tools=TOOLS,
                 model=MODEL_NAME
             )
         except Exception as e:
-            refusal_msg = f"Execution interrupted due to API constraint (likely token limit from too many iterative traces): {str(e)}"
+            refusal_msg = f"Execution interrupted: {str(e)}"
             logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
             logger.print_terminal_trace()
             return refusal_msg
 
         choice = response.choices[0]
-        # DEBUG: print(f"DEBUG: finish_reason={choice.finish_reason}")
         
-        # Some models use STOPPED, others might return None with non-empty content
         if choice.finish_reason == CompletionsFinishReason.STOPPED or (choice.message.content and not choice.message.tool_calls):
-            # Valid Answer Complete
-            final_answer = choice.message.content
-            # Extract granular citations from the text
+            # Clean reasoning blocks before logging and returning
+            final_answer = clean_final_answer(choice.message.content)
+            
             granular_citations = extract_citations(final_answer)
-            # If no granular ones found, fallback to tool names used
             if not granular_citations:
                 granular_citations = list(set([step["tool_name"] for step in logger.current_trace["steps"]]))
             
@@ -171,53 +218,58 @@ def run_agent(question: str) -> str:
             return final_answer
             
         elif choice.finish_reason == CompletionsFinishReason.TOOL_CALLS:
-            # Add LM's request to the messages frame
             messages.append(choice.message)
             
             for tool_call in choice.message.tool_calls:
-                # Check if we've already hit or exceeded limit before processing this call
                 if step_count >= max_steps:
                     break
                     
                 tool_name = tool_call.function.name
-                
                 try:
                     args = json.loads(tool_call.function.arguments)
-                except json.JSONDecodeError:
+                except:
                     args = {}
                 
-                # Safely execute
-                try:
-                    if tool_name == "search_docs":
-                        input_str = args.get("query", "")
-                        result = TOOL_MAP[tool_name](input_str)
-                    elif tool_name == "query_data":
-                        input_str = args.get("sql_query", "")
-                        result = TOOL_MAP[tool_name](input_str)
-                    elif tool_name == "web_search":
-                        input_str = args.get("query", "")
-                        result = TOOL_MAP[tool_name](input_str)
-                    else:
-                        input_str = str(args)
-                        result = f"Error: Tool '{tool_name}' not found."
-                except Exception as e:
-                    result = f"Error computing tool {tool_name}: {str(e)}"
+                input_str = args.get("sql_query") if tool_name == "query_data" else args.get("query", "")
+                
+                # KEYWORD DEDUPLICATION (SOTA logic)
+                raw_keywords = tokenize(input_str)
+                query_keywords = frozenset([w for w in raw_keywords if w not in AGENT_STOP_WORDS])
+                
+                # Check for exact keyword set match OR if the new query is a subset of a broader previous successful query
+                is_redundant = False
+                for prev_tool, prev_keywords in context_state["used_normalized_queries"]:
+                    if tool_name == prev_tool:
+                        # If the keywords are the same, or the new query is just a subset of keywords we already searched
+                        if query_keywords == prev_keywords or (query_keywords and query_keywords.issubset(prev_keywords)):
+                            is_redundant = True
+                            break
+                
+                if is_redundant and len(query_keywords) > 0:
+                    result = f"Error: Redundant call. Your existing knowledge already covers keywords {list(query_keywords)}. Please use your KNOWLEDGE BASE SO FAR."
+                else:
+                    try:
+                        raw_result = TOOL_MAP[tool_name](input_str)
+                        result = normalize_output(raw_result)
+                        
+                        if tool_name == "query_data":
+                            context_state["structured"].append(result)
+                        elif tool_name == "search_docs":
+                            context_state["unstructured"].append(result)
+                        else:
+                            context_state["web"].append(result)
+                        
+                        context_state["used_normalized_queries"].add((tool_name, query_keywords))
+                    except Exception as e:
+                        result = f"Error computing tool {tool_name}: {str(e)}"
                     
-                # Log step iteratively
                 logger.log_step(tool_name=tool_name, tool_input=input_str, tool_output=str(result))
-                
-                # Mount Context
                 messages.append(ToolMessage(content=str(result), tool_call_id=tool_call.id))
-                
                 step_count += 1
-            
-            # If we hit the cap mid-turn or after turn, the main while loop will exit.
         else:
             break
-
             
-    # Hard cap edge case
-    refusal_msg = "I'm sorry, but I was unable to find the correct answer within the allowed maximum number of steps (8 calls). Halting execution to prevent infinite loops."
+    refusal_msg = "Could not find answer within 8 steps."
     logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
     logger.print_terminal_trace()
     return refusal_msg
