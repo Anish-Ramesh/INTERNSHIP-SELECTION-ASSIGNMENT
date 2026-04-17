@@ -10,15 +10,16 @@ def run_task_c():
     print()
 
     questions = [
-        "Identify the primary themes of the movie with the highest opening weekend in our dataset.",
-        "Compare the Rotten Tomatoes score of 'Avatar' with the critical consensus of 'Avengers: Infinity War'. Which one is described more as an 'unqualified triumph'?",
-        "Search the web for any upcoming project by James Cameron and compare its projected release date with the budget of 'Avatar' found in our database.",
-        "Compare the total worldwide gross of all 'Avengers' movies in our database with the combined opening weekends of all 'Frozen' movies. Then, identify which 'Avengers' film is described in our reviews as a 'burdened sequel' and summarize its specific 'Ultron Enigma'.",
-        "Find the movie with the lowest Rotten Tomatoes score in our database, then search the web to find its director and any recent awards they have won."
+        "Find the movie with the highest opening weekend revenue in the dataset and summarize its critical themes from the review documents.",
+        "Compare the Rotten Tomatoes score of 'Avatar' and 'Avengers: Infinity War' and identify which film is described more positively in the review corpus.",
+        "Retrieve the budget of any James Cameron film from the dataset and find recent news about his upcoming projects using web search.",
+        "Identify the movie with the lowest Rotten Tomatoes score in the dataset and check online if its director has received any recent awards.",
+        "Compare total worldwide gross of all Marvel movies in the dataset with their critical reception in reviews, and explain any pattern you observe.",
+        "Find a high-budget film from the dataset and check whether its director has any announced upcoming films in recent news."
     ]
 
     for i, q in enumerate(questions, 1):
-        print(f"[QUESTION {i}/5]: {q}")
+        print(f"[QUESTION {i}/6]: {q}")
         ans = run_agent(q)
         print(f">>> FINAL AGENT RESPONSE:")
         print(ans)

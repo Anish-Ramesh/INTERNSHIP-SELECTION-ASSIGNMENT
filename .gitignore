@@ -3,8 +3,10 @@
 
 # Personal Scratch Scripts
 a.py
+dataset\movie_dataset.csv
 test_bm25.py
 task_SOTA_test.py
+task_D_behavioral_test.py
 
 # Python Cache
 __pycache__/
@@ -33,4 +35,4 @@ evaluation/logs/
 data/*.db
 data/database.db
 database_processed.db
-
+evaluation_report.md

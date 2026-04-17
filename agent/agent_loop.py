@@ -113,6 +113,7 @@ Guidelines:
     - NEVER invent formats like "[Source: query_data tables]".
 - **DATA RECOVERY**: If a database query or document search returns a NULL, empty, or missing value for a requested field (e.g., budget, lead actor), DO NOT terminate. Proactively use `web_search` to find the missing info and complete the reasoning or comparison as requested.
 - **DEDUPLICATION**: Do not repeat semantically similar searches. If you have "Avatar themes," you already have "themes of Avatar."
+- **REFUSALS**: You are a movie specialist. If a question is NOT related to movies (e.g., financial advice, medical queries, recipes, or harmful requests), you MUST politely decline to answer. DO NOT call any tools for non-movie topics.
 """
 
 # SOTA Deduplication Stop Words

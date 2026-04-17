@@ -56,7 +56,7 @@ def main():
         merged = merged.dropna(subset=['Gross_clean', primary_col_rating])
         merged['Gross_clean'] = merged['Gross_clean'].astype(float)
         
-        merged['computed_budget'] = ''
+        merged['computed_budget'] = merged.get('Budget', '')
         merged['computed_week_open'] = merged['Gross_clean'] / 60
         merged['computed_gross'] = merged['Gross_clean']
         merged['computed_rating'] = merged[primary_col_rating]
@@ -167,21 +167,25 @@ def main():
     structured_df['worldwide gross'] = merged['computed_gross']
     structured_df['Rotten Tomatoes score'] = merged['computed_rating']
     
+    # STRICT FILTERING: Remove any movie with missing data in ANY of the structured columns
+    initial_count = len(structured_df)
+    structured_df = structured_df.replace('', pd.NA).dropna()
+    final_count = len(structured_df)
+    
     structured_path = 'dataset/movies_structured.csv'
     try:
         structured_df.to_csv(structured_path, index=False)
-        print(f"Saved {len(structured_df)} matched rows into {structured_path}")
+        print(f"Saved {final_count} complete matched rows into {structured_path} (Removed {initial_count - final_count} incomplete rows)")
     except PermissionError:
         print(f"Skipped saving {structured_path} as it is open or permission is denied (left as is).")
 
-    # Generate Unstructured Reviews
+    # Generate Unstructured Reviews - Simplified Logic
     clear_directory(unstructured_dir)
     os.makedirs(unstructured_dir, exist_ok=True)
     
-    files_created = 0
-    files_kept = 0
+    files_active = 0
     for index, row in merged.iterrows():
-        if (files_created + files_kept) >= num_files_to_generate:
+        if files_active >= num_files_to_generate:
             break
             
         title = row['computed_title']
@@ -191,16 +195,12 @@ def main():
         safe_title = get_safe_title(title)
         file_path = os.path.join(unstructured_dir, f"{safe_title}.txt")
         
-        if os.path.exists(file_path):
-            files_kept += 1
-            # DO NOT OVERWRITE if it exists! We want to keep the long detailed ones.
-            # But we consider it as part of our `num_files_to_generate` quota.
-        else:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(txt_content)
-            files_created += 1
+        # We always overwrite or create the new files up to N
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(txt_content)
+        files_active += 1
 
-    print(f"Created {files_created} new text files, kept {files_kept} existing text files in {unstructured_dir} directory.")
+    print(f"Successfully ensured {files_active} text files in {unstructured_dir} directory.")
     print("Done!")
 
 if __name__ == "__main__":

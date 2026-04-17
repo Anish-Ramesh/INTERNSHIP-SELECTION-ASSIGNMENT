@@ -1,22 +1,21 @@
-Movie: Beauty and the Beast
-Review: The consensus among critics for "Beauty and the Beast" highlights a sharp divide between the 1991 animated classic, hailed as a near-perfect masterpiece, and the 2017 live-action remake, which is viewed as a visually stunning but often soulless recreation.
-
-1991 Animated Masterpiece: "A Near-Perfect Mix"
-Critics largely agree that the original film reached the pinnacle of the Disney Renaissance by balancing complex character development with groundbreaking animation.
-
-Elevated Animation & Music: The film reached back to a healthy Hollywood tradition where the best talent was gathered for family entertainment. The scores by Alan Menken and Howard Ashman are described as "iconic" and "gorgeously orchestrated," with the ballroom dance remaining one of the greatest animated sequences ever.
-
-The Beast as a Tragic Hero: Unlike earlier fairy tales, critics praised the Beast's role as a complex protagonist whose arc is defined by teaching Belle not to judge him by his appearance.
-
-Darker Undercurrents: The film was less intent on "sweetness" than its predecessors, carrying a more "darkly forbidding" tone that appealed to adults as much as children.
-
-2017 Live-Action Remake: "Flawed but Enchanting" 
-The 2017 version, while a massive box office success, received a more mixed critical reception centered on its "imitation of an imitation" nature.
-
-Visual Splendor vs. CGI "Hollowness": While reviewers praised the "insanely impressive" visuals, others found the CGI Beast "goofy" or "plastic," which some felt hindered the romantic chemistry between the leads.
-
-Narrative Fleshing: Many appreciated the added backstories, such as the exploration of Belle’s mother and the Beast’s childhood, which filled "logic gaps" from the original.
-
-Performances: Luke Evans as Gaston and Josh Gad as LeFou were frequently cited as highlights. Emma Watson's Belle received polarizing feedback; some saw her as a "revelation" of intelligence, while others described her performance as "lukewarm" or "soulless" compared to the original voice acting.
-
+movie: Beauty and the Beast
+review: The consensus among critics for "Beauty and the Beast" highlights a sharp divide between the 1991 animated classic, hailed as a near-perfect masterpiece, and the 2017 live-action remake, which is viewed as a visually stunning but often soulless recreation.
+1991 Animated Masterpiece: "A Near-Perfect Mix"
+Critics largely agree that the original film reached the pinnacle of the Disney Renaissance by balancing complex character development with groundbreaking animation.
+
+Elevated Animation & Music: The film reached back to a healthy Hollywood tradition where the best talent was gathered for family entertainment. The scores by Alan Menken and Howard Ashman are described as "iconic" and "gorgeously orchestrated," with the ballroom dance remaining one of the greatest animated sequences ever.
+
+The Beast as a Tragic Hero: Unlike earlier fairy tales, critics praised the Beast's role as a complex protagonist whose arc is defined by teaching Belle not to judge him by his appearance.
+
+Darker Undercurrents: The film was less intent on "sweetness" than its predecessors, carrying a more "darkly forbidding" tone that appealed to adults as much as children.
+
+2017 Live-Action Remake: "Flawed but Enchanting" 
+The 2017 version, while a massive box office success, received a more mixed critical reception centered on its "imitation of an imitation" nature.
+
+Visual Splendor vs. CGI "Hollowness": While reviewers praised the "insanely impressive" visuals, others found the CGI Beast "goofy" or "plastic," which some felt hindered the romantic chemistry between the leads.
+
+Narrative Fleshing: Many appreciated the added backstories, such as the exploration of Belle’s mother and the Beast’s childhood, which filled "logic gaps" from the original.
+
+Performances: Luke Evans as Gaston and Josh Gad as LeFou were frequently cited as highlights. Emma Watson's Belle received polarizing feedback; some saw her as a "revelation" of intelligence, while others described her performance as "lukewarm" or "soulless" compared to the original voice acting.
+
 Critical Verdict: The general sentiment describes it as an "eminently watchable" film that justifies its existence with nostalgia but rarely surpasses the original’s poetic unity.

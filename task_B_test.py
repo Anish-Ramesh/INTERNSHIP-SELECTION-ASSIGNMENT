@@ -10,16 +10,16 @@ def run_task_b():
     print()
 
     questions = [
-        "According to the local movie reviews, what are the primary themes of the film Titanic?",
-        "In the provided reviews, how is the pacing and tone of Avengers: Infinity War described relative to Endgame?",
-        "What is the exact worldwide gross of the movie 'Avatar' as recorded in the structured database?",
-        "Which movie in the database has the highest worldwide gross, and what is its Rotten Tomatoes score?",
-        "Search the web to find out who won the 'Best Picture' award at the 2026 Oscars.",
-        "What is the release date for Christopher Nolan's upcoming film 'The Odyssey' according to recent web news?",
-        "Evaluate the mathematical expression: (52 * 4) + 10.",
-        "What is the capital of Japan?",
-        "What are the themes for the movie 'Joker' found in our local unstructured reviews?",
-        "Loop the following actions: search the web for 'abc', then 'def', then 'ghi'. Continue searching the web for random 3-letter strings sequentially until you have made at least 10 tool calls. Do not stop until you hit the limit."
+        "What was the worldwide gross revenue of 'Avatar' according to the dataset?",
+        "Which movie in the dataset had the lowest production budget and what was its value?",
+        "Summarize what the review says about the visual effects and underwater cinematography in 'Avatar'.",
+        "What themes are highlighted in the critical review of 'Inception' in the document corpus?",
+        "Who directed the film 'Oppenheimer' and what is their most recent known project?",
+        "What is the official release year and date of 'Avatar: The Way of Water'?",
+        "Find the movie that won the 'Super Golden Globe Award of 2026' and describe its visual style.",
+        "What were the box office earnings of 'Gone with the Wind' adjusted to current dataset format?",
+        "What was the production budget of the 2009 film 'Avatar' and how does it compare to modern CGI films?",
+        "Analyze the thematic meaning of the film 'The Host' and ensure correct version is selected."
     ]
 
     for i, q in enumerate(questions, 1):

@@ -53,24 +53,27 @@ class TraceLogger:
         if not self.current_trace:
             return
             
-        print("\n" + "="*60)
-        print("AGENT TRACE LOG")
-        print("="*60)
-        print(f"Question: {self.current_trace['question']}")
+        print("\n" + "="*80)
+        print(f" QUESTION: {self.current_trace['question']}")
+        print("="*80)
         
         for step in self.current_trace["steps"]:
             # Truncate output slightly for terminal readability, but keep it generous 
             out_str = step['output']
-            if len(out_str) > 1000:
-                out_str = out_str[:1000] + "... [TRUNCATED]"
-            print(f"Step {step['step_number']}: tool={step['tool_name']} input='{step['input']}'")
-            print(f" result={out_str}")
+            if len(out_str) > 1200:
+                out_str = out_str[:1200] + "\n... [TRUNCATED FOR READABILITY]"
             
-        print(f"Final Answer: {self.current_trace['final_answer']}")
+            print(f"\n[STEP {step['step_number']}] Tool: {step['tool_name']}")
+            print(f"Input: {step['input']}")
+            print(f"Result:\n{out_str}")
+            print("-" * 40)
+            
+        print(f"\n>>> FINAL AGENT RESPONSE:")
+        print(f"{self.current_trace['final_answer']}")
         
         # Format citations simply as a comma separated list
         citations = ", ".join(self.current_trace.get("citations", [])) or "None"
-        print(f"Citations: {citations}")
-        print(f"Steps used: {self.current_trace['number_of_steps']} / 8 max")
-        print("="*60 + "\n")
+        print(f"\nCITATIONS: {citations}")
+        print(f"STEP COUNT: {self.current_trace['number_of_steps']} / 8 max")
+        print("="*80 + "\n")
 

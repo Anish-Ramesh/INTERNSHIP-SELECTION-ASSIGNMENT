@@ -1,18 +1,18 @@
-Movie: Star Wars Episode VII - The Force Awakens
-Review: The Final Verdict: Star Wars: Episode VII – The Force Awakens
-The Force Awakens is a triumphant, high-energy restoration of the Star Wars legacy that succeeded in bridging a thirty-year gap for fans. While it has been widely criticised for its "slavish devotion" to the plot beats of the 1977 original, it is hailed as a masterclass in blockbuster filmmaking that prioritised practical effects, kinetic action, and charismatic new characters over the "stale artificiality" of the prequel era. It serves as a near-perfect "pilot episode" for a new generation, even if it feels more like a polished "remix" than a truly original story.
-
-The Review
-Critics generally view the film as an "essential foundational act" that chose to play it safe with the plot to ensure it could successfully win back the hearts of a fractured fanbase.
-
-The Highs: A New Class of Icons
-The film’s greatest victory lies in its casting. Daisy Ridley (Rey) was hailed as a "revelation," bringing a mixture of grit and wide-eyed wonder that made her an instant star. John Boyega (Finn) and Oscar Isaac (Poe Dameron) were praised for their "infectious chemistry" and humour, while Adam Driver (Kylo Ren) was singled out as the most complex and interesting villain the franchise had produced since the original trilogy. Reviewers also noted that director J.J. Abrams successfully captured the "tangible, lived-in" aesthetic of the original films by favouring real locations and practical models over pure digital sets.
-
-The Lows: "A New Hope" Clone
-The most frequent and enduring criticism is that the film is a "beat-for-beat retread" of Episode IV. From a droid carrying a secret map on a desert planet to a third, even larger planet-destroying superweapon (Starkiller Base), critics argued that the story relied far too heavily on nostalgia. Some reviewers felt this "derivative" nature made the film feel "committee-approved" and lacking in independent identity.
-
-Pacing and Logic Gaps
-Several critics noted a "frenetic pacing problem," where the film moves so quickly through action set-pieces that there is little time for character reflection or world-building. The lack of political context—specifically regarding how the First Order rose to power and what exactly the Resistance was resisting—left many feeling the broader state of the galaxy was "muddled" or "empty".
-
-The Emotional Weight: Passing the Torch
+movie: Star Wars: Episode VII - The Force Awakens
+review: The Final Verdict: Star Wars: Episode VII – The Force Awakens
+The Force Awakens is a triumphant, high-energy restoration of the Star Wars legacy that succeeded in bridging a thirty-year gap for fans. While it has been widely criticised for its "slavish devotion" to the plot beats of the 1977 original, it is hailed as a masterclass in blockbuster filmmaking that prioritised practical effects, kinetic action, and charismatic new characters over the "stale artificiality" of the prequel era. It serves as a near-perfect "pilot episode" for a new generation, even if it feels more like a polished "remix" than a truly original story.
+
+The Review
+Critics generally view the film as an "essential foundational act" that chose to play it safe with the plot to ensure it could successfully win back the hearts of a fractured fanbase.
+
+The Highs: A New Class of Icons
+The film’s greatest victory lies in its casting. Daisy Ridley (Rey) was hailed as a "revelation," bringing a mixture of grit and wide-eyed wonder that made her an instant star. John Boyega (Finn) and Oscar Isaac (Poe Dameron) were praised for their "infectious chemistry" and humour, while Adam Driver (Kylo Ren) was singled out as the most complex and interesting villain the franchise had produced since the original trilogy. Reviewers also noted that director J.J. Abrams successfully captured the "tangible, lived-in" aesthetic of the original films by favouring real locations and practical models over pure digital sets.
+
+The Lows: "A New Hope" Clone
+The most frequent and enduring criticism is that the film is a "beat-for-beat retread" of Episode IV. From a droid carrying a secret map on a desert planet to a third, even larger planet-destroying superweapon (Starkiller Base), critics argued that the story relied far too heavily on nostalgia. Some reviewers felt this "derivative" nature made the film feel "committee-approved" and lacking in independent identity.
+
+Pacing and Logic Gaps
+Several critics noted a "frenetic pacing problem," where the film moves so quickly through action set-pieces that there is little time for character reflection or world-building. The lack of political context—specifically regarding how the First Order rose to power and what exactly the Resistance was resisting—left many feeling the broader state of the galaxy was "muddled" or "empty".
+
+The Emotional Weight: Passing the Torch
 The return of Harrison Ford as Han Solo was a massive highlight; critics praised his "regal and rascally" performance, which provided the film with its emotional anchor. His fate was seen as a bold, necessary move to establish the high stakes of the new trilogy, though some felt the reaction to his death within the film was "rushed" and lacked the solemnity it deserved.

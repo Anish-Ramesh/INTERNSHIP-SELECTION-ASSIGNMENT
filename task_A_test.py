@@ -18,8 +18,6 @@ def run_task_a():
     print()
 
     queries_docs = [
-        "What does the review say about Inception?",
-        "What are the main themes of the movie Titanic?",
         "Are there any mentions of emotional impact or resonant blockbuster moments in Avengers?",
         "What is the review opinion on the CGI and visual spectacle of Jurassic World?",
         "How is the acting or performance described in the Joker review?"
