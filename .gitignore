@@ -7,6 +7,7 @@ dataset\movie_dataset.csv
 test_bm25.py
 task_SOTA_test.py
 task_D_behavioral_test.py
+degradation_test_report.md
 
 # Python Cache
 __pycache__/

@@ -1,0 +1,66 @@
+{
+    "NORMAL": [
+        {
+            "id": 2,
+            "phase": "NORMAL_CORPUS (100%)",
+            "answer": "[DATABASE]\n- The movie with the lowest production budget in the dataset is \"Rampage,\" with a budget value of 0. (Citations: SQL query results from the movie dataset)\n\n[INFERENCE]\n- According to the dataset, \"Rampage\" has the lowest recorded production budget among the listed movies, which is noted as 0. This might indicate the budget was either not disclosed or recorded as zero in the database.\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 5.27
+        },
+        {
+            "id": 5,
+            "phase": "NORMAL_CORPUS (100%)",
+            "answer": "[DATABASE]\n- No database information found specific to the movie \"Oppenheimer\" for director or recent projects.\n\n[WEB]\n- \"Oppenheimer\" (2023) is an epic biographical thriller film directed by Christopher Nolan. (Source: Wikipedia, IMDb)\n- Christopher Nolan released \"Oppenheimer\" in July 2023, starring Cillian Murphy in the lead role. (Source: IMDb)\n- Christopher Nolan has signed with Universal Pictures after leaving Warner Bros., and \"Oppenheimer\" is his project under Universal. His next movie is planned to be filmed with Universal and expected possibly in Fall 2024 or later, but no specific title is confirmed yet. (Sources: IMDb, Wikipedia, Collider/Facebook)\n\n[INFERENCE]\n- Christopher Nolan directed the 2023 film \"Oppenheimer.\"\n- His most recent known completed project is \"Oppenheimer\" itself.\n- He is currently planning a new project with Universal Pictures, but no detailed information or confirmed title for this new film is publicly available yet.\n\n[CONFIDENCE]\n- High",
+            "duration": 11.45
+        },
+        {
+            "id": 7,
+            "phase": "NORMAL_CORPUS (100%)",
+            "answer": "[DATABASE]\n- The movie with the highest opening weekend revenue is \"Avatar\" with approximately $48,728,400. (Citations: movies table query)\n\n[WEB]\n- \"Avatar\" (2009) directed by James Cameron is noted for being both a technological and cinematic milestone. It pioneered new tools in performance capture and 3D cinematography. The film's immersive world-building is highly praised, with the fictional ecosystem of Pandora being a fully realized and transportive environment. Critics highlight the revolutionary performance capture that brings digital characters to life, especially praising Zoe Salda\u00f1a's portrayal of Neytiri as the emotional core of the film. The film is regarded as a visual masterpiece and sets a new standard in immersive filmmaking.\n\n[INFERENCE]\n- Avatar's record opening weekend correlates with its appeal as a groundbreaking visual and technical spectacle. The critical themes emphasize innovation through immersive world-building and performance capture, making it not only a commercial success but also a significant leap forward in cinematic technology and storytelling. These pioneering elements likely contributed to its strong audience draw on release.\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 7.78
+        },
+        {
+            "id": 11,
+            "phase": "NORMAL_CORPUS (100%)",
+            "answer": "[DATABASE]\n- Marvel movies in the dataset show a wide range of worldwide gross revenue, with top earners like \"The Avengers\" ($1.52 billion, 91 RT score) and \"Avengers: Age of Ultron\" ($1.4 billion, 76 RT score).\n- Other Marvel movies have worldwide grosses varying from around $623 million (\"Iron Man 2\") to nearly $900 million (\"Spider-Man 3\").\n- Rotten Tomatoes scores also vary significantly, from as high as 93 (Spider-Man 2) to as low as 51 (The Amazing Spider-Man 2), indicating mixed critical reception across the board.\n- There isn't a strict one-to-one correlation between critical acclaim and box office gross; some critically lower-rated films had strong box office performance and vice versa.\n\n[WEB]\n- No specific qualitative review reception data was found for these Marvel movies in the dataset or web search.\n\n[INFERENCE]\n- An overall pattern suggests that while Marvel movies generally perform very well worldwide financially, their critical reception varies moderately. The highest-grossing Marvel films often have good to excellent critical scores, but some with lower scores still achieve substantial box office success, indicating strong fan base and brand momentum.\n- This implies Marvel's box office strength is not solely dependent on critical acclaim but also on established franchise popularity, character appeal, and marketing, which sustain high revenues even if some films get mixed reviews.\n\n[CONFIDENCE]\n- Level: High (based on dataset and known general trends of Marvel movies box office and critical reception).",
+            "duration": 33.17
+        },
+        {
+            "id": 20,
+            "phase": "NORMAL_CORPUS (100%)",
+            "answer": "[INFERENCE]\nThe film \"The Host\" (2006), directed by Bong Joon-ho, is a monster movie with a distinctive twist that places strong emphasis on family, social status, and individual civil rights alongside the monster narrative. It follows the story of Park Gang-du, a food vendor, whose daughter is captured by a creature emerging from Seoul's Han River. Thematically, the film explores the dynamics of family loyalty and redemption, social commentary on governmental and societal response to crises, and critiques related to environmental contamination and public health. It marries genres of thriller, comedy, and horror to underscore human and societal struggles in the face of an extraordinary threat, using the monster metaphorically to reflect societal anxieties and political issues.\n\nThis thematic synthesis distinctly aligns with the 2006 version of \"The Host\" directed by Bong Joon-ho, not to be confused with other films of the same title from different years.\n\n[DATABASE]\n- No direct database data found (due to no exact title match in the movies database).\n\n[WEB]\n- The Host (2006) by Bong Joon-ho is about family, social status, and civil rights alongside the monster story (filmobsessive.com)\n- The film critiques societal and governmental failures and highlights family, redemption, and societal issues through its monster narrative (theedgesusu.co.uk, Wikipedia).\n\n[CONFIDENCE]\n- Level: High (given multiple reputable film analysis sources and detailed thematic discussion on the identified 2006 film).",
+            "duration": 15.62
+        }
+    ],
+    "DEGRADED": [
+        {
+            "id": 2,
+            "phase": "DEGRADED_CORPUS (50%)",
+            "answer": "[DATABASE]\n- The movie in the dataset with the lowest production budget is \"Rampage\" with a budget value of 0. (Citations: movies table query)\n\n[INFERENCE]\n- Based on the data, \"Rampage\" has the lowest recorded budget in the dataset, though a budget of 0 likely indicates missing or unreported budget data rather than an actual zero production cost.\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 4.68
+        },
+        {
+            "id": 5,
+            "phase": "DEGRADED_CORPUS (50%)",
+            "answer": "[INFERENCE]\nThe film \"Oppenheimer\" was directed by Christopher Nolan. According to multiple web sources, including YouTube and joblo.com, \"Oppenheimer\" is Christopher Nolan's latest project, indicating that this is his most recent known work.\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 6.61
+        },
+        {
+            "id": 7,
+            "phase": "DEGRADED_CORPUS (50%)",
+            "answer": "[DATABASE]\n- The movie with the highest opening weekend revenue in the dataset is \"Avatar\" with an opening weekend revenue of approximately $48,728,400. (Source: movies database query)\n\n[WEB]\n- \"Avatar,\" directed by James Cameron, is noted as a monumental cinematic achievement and a technical revolution in filmmaking.\n- The film pioneered new performance capture and 3D cinematography techniques, with Cameron delaying production until the required technology was developed.\n- It features immersive world-building, portraying the alien world Pandora as a fully realized ecosystem praised for its visual perfection and bioluminescent flora and fauna.\n- The performance capture technology was groundbreaking, capturing subtle actor expressions, particularly highlighting Zoe Salda\u00f1a's emotional portrayal of Neytiri.\n- Critical reception debates its narrative but universally acknowledges its visual and technological breakthroughs.\n\n[INFERENCE]\n- Avatar holds the top position for opening weekend revenue in the dataset, demonstrating a strong commercial impact.\n- Critically, its major themes emphasize technological innovation in filmmaking, immersive and transportive world-building, and a pioneering approach to performance capture technology.\n- These technical and artistic breakthroughs contribute to the film's landmark status in cinema history, complementing its financial success.\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 31.43
+        },
+        {
+            "id": 11,
+            "phase": "DEGRADED_CORPUS (50%)",
+            "answer": "[DATABASE]\n- Marvel movies in the dataset show a range of worldwide grosses from approximately $370 million to over $1.5 billion. The critical reception via Rotten Tomatoes scores varies mainly between 66 and 94.\n- Highly grossing titles such as \"The Avengers\" ($1.52 billion, 91 RT score), \"Avengers: Age of Ultron\" ($1.4 billion, 76 RT score), and \"Captain America: Civil War\" ($1.15 billion, 90 RT score) have generally strong critical reception but with some variance.\n- Lower grossing Marvel movies like \"Captain America: The First Avenger\" ($370 million, 80 RT score) and \"Thor\" ($449 million, 77 RT score) still have relatively positive reviews though they earned less worldwide.\n\n[WEB]\n- No direct web or review data specifically summarizing Marvel movies box office versus reception patterns was retrieved; however, broad knowledge suggests Marvel's success is driven by a combination of strong brand appeal, consistent quality, and interconnected storytelling.\n\n[INFERENCE]\n- There is a general positive correlation between Rotten Tomatoes critical scores and worldwide gross, indicating that better-reviewed Marvel movies tend to perform better financially, although there are exceptions (e.g., \"Avengers: Age of Ultron\" made very high gross despite a lower score compared to some others). This suggests that while critical acclaim helps, the established fanbase and franchise popularity significantly drive box office performance.\n- The top earners showcase both strong critical approval and mass appeal, reinforcing that Marvel's formula of combining superhero action with quality storytelling and character development resonates well with both critics and audiences globally.\n\n[CONFIDENCE]\n- Level: High (based on clear dataset metrics and well-known franchise impact)",
+            "duration": 12.26
+        },
+        {
+            "id": 20,
+            "phase": "DEGRADED_CORPUS (50%)",
+            "answer": "[INFERENCE]\nThe film \"The Host\" (2006) by Bong Joon-ho is rich thematically, deeply rooted in South Korea's social and historical contexts. It blends the Hollywood blockbuster style with traditional Japanese monster cinema and family melodrama, reflecting South Korean societal concerns. The film embodies the concept of *han*, a Korean cultural notion of collective unresolved anguish, which permeates the narrative through melodramatic angst and tragedy. The monster itself can be seen as a metaphor for external threats but also the lingering impact of South Korea's troubled history, especially its division and political tensions. According to sources, the film resonated so much that it was praised even by North Korea for capturing South Korean people's psychology and reality. In sum, \"The Host\" is not just a monster movie but also a poignant social commentary on modern Korean identity, family bonds, political distrust, and historical trauma.\n\n[WEB]\n- \"The Host reflected South Korea's reality and people's psychology.\" (Wikipedia)\n- \"The film combines aspects of Hollywood blockbuster, Japanese kaiju eiga, and South Korean melodramatic traditions.\" (Senses of Cinema)\n- \"The film resonates with *han*, a concept of unresolved grief and pain, embedded in South Korean culture and history.\" (Senses of Cinema)\n\n[CONFIDENCE]\n- Level: High",
+            "duration": 12.71
+        }
+    ]
+}

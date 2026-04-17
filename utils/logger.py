@@ -19,7 +19,7 @@ class TraceLogger:
             "refused": False
         }
 
-    def log_step(self, tool_name: str, tool_input: str, tool_output: str):
+    def log_step(self, tool_name: str, tool_input: str, tool_output: str, rationale: str = None):
         if not self.current_trace:
             return
         
@@ -27,7 +27,8 @@ class TraceLogger:
             "step_number": len(self.current_trace["steps"]) + 1,
             "tool_name": tool_name,
             "input": tool_input,
-            "output": tool_output
+            "output": tool_output,
+            "rationale": rationale
         }
         self.current_trace["steps"].append(step)
         self.current_trace["number_of_steps"] += 1
@@ -53,9 +54,9 @@ class TraceLogger:
         if not self.current_trace:
             return
             
-        print("\n" + "="*80)
+        print("\n" + "█"*80)
         print(f" QUESTION: {self.current_trace['question']}")
-        print("="*80)
+        print("█"*80)
         
         for step in self.current_trace["steps"]:
             # Truncate output slightly for terminal readability, but keep it generous 
@@ -63,17 +64,20 @@ class TraceLogger:
             if len(out_str) > 1200:
                 out_str = out_str[:1200] + "\n... [TRUNCATED FOR READABILITY]"
             
-            print(f"\n[STEP {step['step_number']}] Tool: {step['tool_name']}")
-            print(f"Input: {step['input']}")
-            print(f"Result:\n{out_str}")
-            print("-" * 40)
+            print(f"\n[STEP {step['step_number']}] TOOL: {step['tool_name']}")
+            if step.get('rationale'):
+                print(f"RATIONALE: {step['rationale'].strip()}")
+            print(f"INPUT: {step['input']}")
+            print(f"RESULT:\n{out_str}")
+            print("-" * 60)
             
-        print(f"\n>>> FINAL AGENT RESPONSE:")
+        print(f"\n" + "▼ " * 20 + " FINAL AGENT RESPONSE " + "▼ " * 20)
         print(f"{self.current_trace['final_answer']}")
+        print("▲ " * 20 + " END OF RESPONSE " + "▲ " * 20)
         
         # Format citations simply as a comma separated list
         citations = ", ".join(self.current_trace.get("citations", [])) or "None"
         print(f"\nCITATIONS: {citations}")
         print(f"STEP COUNT: {self.current_trace['number_of_steps']} / 8 max")
-        print("="*80 + "\n")
+        print("█"*80 + "\n")
 

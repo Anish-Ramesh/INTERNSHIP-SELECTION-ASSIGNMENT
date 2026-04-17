@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import time
 from dotenv import load_dotenv
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import (
@@ -18,6 +19,7 @@ from tools.search_docs import search_docs, tokenize
 from tools.query_data import query_data
 from tools.web_search import web_search
 from utils.logger import TraceLogger
+from agent.bonus_features import BONUS_A_SYSTEM_PROMPT, TelemetryTracker, reflect_on_answer
 
 load_dotenv()
 
@@ -90,31 +92,24 @@ TOOL_MAP = {
     "web_search": web_search
 }
 
-SYSTEM_PROMPT = """You are an intelligent reasoning agent tasked with answering questions about movies.
-You have three tools available:
-1. `search_docs`: to retrieve qualitative movie reviews.
-2. `query_data`: to execute SQL queries on a database with movie financials & ratings.
-3. `web_search`: to search the live web for current events.
+SYSTEM_PROMPT = """You are a SOTA Movie Reasoning Agent.
+Your goal is to provide high-accuracy, grounded, and synthesized answers using movie data.
 
-Constraints:
-- **MAXIMUM STEPS**: You are strictly limited to a maximum of 8 tool calls per inquiry.
-- **STRICT GROUNDING**: Base your answer ONLY on the provided tool outputs. Do not add outside knowledge or "manual corrections."
-- **CLEAN OUTPUT**: Your final response to the user must ONLY contain the direct answer and citations. NEVER include internal THOUGHT or PLAN blocks in the final answer.
+[DATABASE SCHEMA]
+- title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score.
 
-Guidelines:
-- **THOUGHT & PLAN**: For intermediate reasoning, provide:
-    - `THOUGHT`: Analyze your Knowledge Base. If it contains the info, skip tools.
-    - `PLAN`: List remaining steps.
-- **SQL LOGIC**: When calculating totals for the whole dataset, do NOT use `GROUP BY` unless specifically asked to break down by category. Use `SELECT SUM(column) FROM movies` for global totals.
-- **CITATIONS**: Use ONLY these three formats:
-    - `[Source: filename.txt, Page: X]`
-    - `[Web Source X]`
-    - `[Table: movies, Row: {title}]`
-    - NEVER invent formats like "[Source: query_data tables]".
-- **DATA RECOVERY**: If a database query or document search returns a NULL, empty, or missing value for a requested field (e.g., budget, lead actor), DO NOT terminate. Proactively use `web_search` to find the missing info and complete the reasoning or comparison as requested.
-- **DEDUPLICATION**: Do not repeat semantically similar searches. If you have "Avatar themes," you already have "themes of Avatar."
-- **REFUSALS**: You are a movie specialist. If a question is NOT related to movies (e.g., financial advice, medical queries, recipes, or harmful requests), you MUST politely decline to answer. DO NOT call any tools for non-movie topics.
-"""
+[OUTPUT FORMAT]
+[DATABASE]
+- (Citations)
+[WEB]
+- (Web facts)
+[INFERENCE]
+- (Synthesis)
+[CONFIDENCE]
+- (Level: High/Medium/Low)
+
+NEVER leak internal reasoning blocks (THOUGHT, PLAN) to the user.
+""" + BONUS_A_SYSTEM_PROMPT
 
 # SOTA Deduplication Stop Words
 AGENT_STOP_WORDS = {
@@ -123,12 +118,12 @@ AGENT_STOP_WORDS = {
 }
 
 def clean_final_answer(text: str) -> str:
-    """Strip internal reasoning blocks (THOUGHT, PLAN, etc.) from the final user response."""
-    # Remove THOUGHT:, PLAN: and any intermediate Answer: tags that leak into the final text
-    text = re.sub(r"(?i)THOUGHT:.*?(PLAN:.*?|(?=Answer:|$))", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)PLAN:.*?(?=Answer:|$)", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)Answer:\s*", "", text).strip()
-    return text
+    """Strip internal reasoning blocks (STRATEGIC BREAKDOWN, THOUGHT, PLAN, etc.) from the final response."""
+    # Remove STRATEGIC BREAKDOWN:, THOUGHT:, PLAN:
+    text = re.sub(r"(?i)STRATEGIC BREAKDOWN:.*?(?=THOUGHT:|PLAN:|\[DATABASE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)THOUGHT:.*?(?=PLAN:|\[DATABASE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)PLAN:.*?(?=\[DATABASE\]|$)", "", text, flags=re.DOTALL)
+    return text.strip()
 
 def normalize_output(result: any, max_len: int = 2000) -> str:
     """Clean and truncate tool outputs for the context layer."""
@@ -153,6 +148,7 @@ def extract_citations(text: str) -> list:
 
 def run_agent(question: str) -> str:
     logger = TraceLogger()
+    telemetry = TelemetryTracker()
     logger.start_trace(question)
     
     # SOTA Context Layer
@@ -160,7 +156,9 @@ def run_agent(question: str) -> str:
         "structured": [],
         "unstructured": [],
         "web": [],
-        "used_normalized_queries": set() # Format: (tool_name, frozenset_keywords)
+        "used_normalized_queries": set(), # Format: (tool_name, frozenset_keywords)
+        "failed_sql_queries": set(),
+        "web_calls_count": 0
     }
     
     messages = [
@@ -182,11 +180,13 @@ def run_agent(question: str) -> str:
         
         curated_context = (
             f"REMAINING TOOL CALLS: {remaining}\n"
+            f"WEB SEARCHES PERFORMED: {context_state['web_calls_count']}/2\n"
+            f"FAILED SQL ATTEMPTS: {list(context_state['failed_sql_queries']) if context_state['failed_sql_queries'] else 'None'}\n"
             f"KNOWLEDGE BASE SO FAR:\n"
             f"DATABASE FACTS: {merged_structured if merged_structured else 'None'}\n"
             f"REVIEW THEMES: {merged_unstructured[:1000] if merged_unstructured else 'None'}\n"
             f"WEB NEWS: {merged_web[:500] if merged_web else 'None'}\n"
-            f"IMPORTANT: If the themes/facts you need are already listed above, DO NOT call the tools again. Use the context to answer directly."
+            f"IMPORTANT: If the themes/facts you need are already listed above, DO NOT call the tools again. If WEB searches == 2, STOP searching and conclude with available data."
         )
         
         # Inject curated context
@@ -210,6 +210,21 @@ def run_agent(question: str) -> str:
             # Clean reasoning blocks before logging and returning
             final_answer = clean_final_answer(choice.message.content)
             
+            # --- Bonus C: Reflection Step (Post-Processing) ---
+            curated_knowledge = (
+                " | ".join(list(set(context_state["structured"]))) + "\n" +
+                "\n".join(list(set(context_state["unstructured"]))) + "\n" +
+                "\n".join(list(set(context_state["web"])))
+            )
+            reflection = reflect_on_answer(client, MODEL_NAME, question, final_answer, curated_knowledge[:2000])
+            
+            if "[FAIL]" in reflection:
+                # If reflection fails, we add one emergency turn (Bonus C)
+                reflection_msg = f"\n\n[SELF-REFLECTION CRITIQUE]: {reflection}"
+                # We could resume the loop here if we wanted to be even more aggressive.
+                # For now, we append the critique as a silent correction.
+                final_answer += reflection_msg
+
             granular_citations = extract_citations(final_answer)
             if not granular_citations:
                 granular_citations = list(set([step["tool_name"] for step in logger.current_trace["steps"]]))
@@ -221,6 +236,7 @@ def run_agent(question: str) -> str:
         elif choice.finish_reason == CompletionsFinishReason.TOOL_CALLS:
             messages.append(choice.message)
             
+            start_time = time.time()
             for tool_call in choice.message.tool_calls:
                 if step_count >= max_steps:
                     break
@@ -254,17 +270,30 @@ def run_agent(question: str) -> str:
                         result = normalize_output(raw_result)
                         
                         if tool_name == "query_data":
-                            context_state["structured"].append(result)
+                            if "Error" in str(raw_result):
+                                context_state["failed_sql_queries"].add(input_str)
+                            else:
+                                context_state["structured"].append(result)
                         elif tool_name == "search_docs":
                             context_state["unstructured"].append(result)
                         else:
                             context_state["web"].append(result)
+                            context_state["web_calls_count"] += 1
                         
                         context_state["used_normalized_queries"].add((tool_name, query_keywords))
                     except Exception as e:
                         result = f"Error computing tool {tool_name}: {str(e)}"
                     
-                logger.log_step(tool_name=tool_name, tool_input=input_str, tool_output=str(result))
+                # --- Bonus B: Telemetry (Silent logging) ---
+                latency = time.time() - start_time
+                telemetry.record_call(tool_name, latency, response.usage)
+                
+                logger.log_step(
+                    tool_name=tool_name, 
+                    tool_input=input_str, 
+                    tool_output=str(result),
+                    rationale=choice.message.content
+                )
                 messages.append(ToolMessage(content=str(result), tool_call_id=tool_call.id))
                 step_count += 1
         else:
