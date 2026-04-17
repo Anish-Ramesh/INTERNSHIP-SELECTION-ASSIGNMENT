@@ -25,19 +25,6 @@ evaluation/logs/
 .idea/
 *.swp
 *.swo
-# Personal Scratch & Test Scripts
-a.py
-test_bm25.py
-update_csv.py
-scratch_tool_test.py
-test_agent_b.py
-evaluate_task_b.py
-scratch.py
-verify_task_b_opts.py
-task_A_test_tools.py
-test_tools.py
-task_b_test.py
-fetch_reviews.py
 
 # Output & Evaluation Files
 *.txt

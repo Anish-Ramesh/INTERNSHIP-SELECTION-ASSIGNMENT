@@ -79,10 +79,13 @@ class DocSearchTool:
     def extract_movie(self, query):
         """Identify if a known movie or a partial match is mentioned in the query."""
         query_lower = query.lower()
+        # Normalization: Remove non-alphanumeric characters for robust literal comparison
+        query_norm = re.sub(r'[^\w\s]', '', query_lower)
         
-        # Priority 1: Exact or long substring matches
+        # Priority 1: Exact or long substring matches (normalized)
         for movie in sorted(self.known_movies, key=len, reverse=True):
-            if movie in query_lower:
+            movie_norm = re.sub(r'[^\w\s]', '', movie)
+            if movie_norm in query_norm:
                 return [movie]
         
         # Priority 2: Keyword overlap (e.g. 'Avengers' in query matching 'Avengers Infinity War')

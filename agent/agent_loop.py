@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from dotenv import load_dotenv
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import (
@@ -92,16 +93,39 @@ TOOL_MAP = {
 SYSTEM_PROMPT = """You are an intelligent reasoning agent tasked with answering questions about movies.
 You have three tools available:
 1. `search_docs`: to retrieve qualitative movie reviews.
-2. `query_data`: to execute SQL queries on a database with movie financials & ratings. (table: movies, schema: title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score)
+2. `query_data`: to execute SQL queries on a database with movie financials & ratings.
 3. `web_search`: to search the live web for current events.
 
+Constraints:
+- **MAXIMUM STEPS**: You are strictly limited to a maximum of 8 tool calls per inquiry.
+- **STRICT GROUNDING**: Base your answer ONLY on the provided tool outputs. Do not add themes, facts, or details (e.g., environmentalism, colonialism) unless they are explicitly stated in the retrieved text.
+
 Guidelines:
-- If a question doesn't require tools (e.g. arithmetic, simple greetings), answer directly.
-- ALWAYS cite your sources using the exact format returned by the tools (e.g., [Source: Inception.txt, Page: 1] or [Web Source 1] or Table rows).
-- You may call multiple tools step-by-step if the question requires joining information.
+- **INITIAL FEASIBILITY ASSESSMENT**: Before invoking any tools, analyze the user's request. If the request explicitly asks to exceed the 8-step limit (e.g., "loop 10 times"), or if you estimate the task will logically require more than 8 calls, you must refuse the request immediately, explain that it violates your operational constraints, and terminate without calling any tools.
+- **MULTI-TOOL REASONING**: Many questions require combining information from multiple tools. Identify these cases early. For example, if asked for themes of the highest grossing movie, find the movie title using `query_data` first, then use `search_docs` for the themes.
+- **MISSING DATA**: If a tool returns no data or a NULL field (e.g., budget is missing), state clearly and professionally that "The [field] information is not available in our dataset" rather than saying you cannot answer the entire question.
+- **CITATIONS**: ALWAYS cite your sources for every substantive claim using the exact format:
+    - `[Source: filename.txt, Page: X]` for documents.
+    - `[Web Source X]` for web results.
+    - `[Table: movies, Row: {title}]` for structured database data.
+- **COMPOSITION**: Compose a final unified answer that draws on all relevant sources and clearly attributes which part came from which source.
 - If you hit a roadblock, the tools return empty data, or you cannot confidently answer after checking all sources, output a clear refusal describing what is missing. Do NOT guess or hallucinate.
 - Do not call the same tool with the exact same input if it has already failed.
 """
+
+def extract_citations(text: str) -> list:
+    """Extract granular citation identifiers from the final answer text."""
+    patterns = [
+        r"\[Source: [^\]]+, Page: \d+\]",
+        r"\[Web Source \d+\]",
+        r"\[Table: movies, Row: [^\]]+\]"
+    ]
+    citations = []
+    for pattern in patterns:
+        matches = re.findall(pattern, text)
+        citations.extend(matches)
+    # Deduplicate while preserving order if possible (set is fine here)
+    return list(set(citations))
 
 def run_agent(question: str) -> str:
     logger = TraceLogger()
@@ -136,8 +160,13 @@ def run_agent(question: str) -> str:
         if choice.finish_reason == CompletionsFinishReason.STOPPED or (choice.message.content and not choice.message.tool_calls):
             # Valid Answer Complete
             final_answer = choice.message.content
-            invoked = list(set([step["tool_name"] for step in logger.current_trace["steps"]]))
-            logger.finish_trace(final_answer=final_answer, citations=invoked)
+            # Extract granular citations from the text
+            granular_citations = extract_citations(final_answer)
+            # If no granular ones found, fallback to tool names used
+            if not granular_citations:
+                granular_citations = list(set([step["tool_name"] for step in logger.current_trace["steps"]]))
+            
+            logger.finish_trace(final_answer=final_answer, citations=granular_citations)
             logger.print_terminal_trace()
             return final_answer
             

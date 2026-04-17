@@ -12,11 +12,10 @@ class WebSearchTool:
     def search(self, query: str, max_results: int = 3) -> str:
         """
         Use this tool to handle real-time information retrieval from the internet.
-        It is ideal for identifying recent awards, director updates, or current events
-        that are not available in the local structured or unstructured databases.
+        It is ideal for identifying recent awards, director updates, or current events.
         
-        DO NOT use this tool for qualitative review searches or box-office aggregates
-        unless explicitly required by a lack of local data.
+        To ensure high-quality results, prefer adding 'news' or site-specific filters (e.g., 'site:variety.com') 
+        to your query to avoid social media clutter.
         
         Args:
             query (str): A concise search string (preferably under 10 words).
@@ -80,7 +79,8 @@ def web_search(query: str) -> str:
     """
     Real-time web search for current events and updates.
     Use this to answer questions about recent awards, live web updates, or information not present in the local reviews or database.
-    Query should be short (under 10 words).
+    Query should be short (under 10 words). 
+    TIP: Including 'news' or 'latest' in the query often yields higher quality results from reputable sources.
     IMPORTANT: When using information from this tool, you MUST cite the specific URL and Date in your final answer.
     """
     global _web_search_tool_instance
