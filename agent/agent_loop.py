@@ -161,17 +161,18 @@ def extract_citations(text: str) -> list:
     # Deduplicate while preserving order if possible (set is fine here)
     return list(set(citations))
 
-def run_agent(question: str) -> str:
+def run_agent(question: str, bypass_cache: bool = False) -> str:
     # 1. Check Cache
-    cache = load_cache()
-    if question in cache:
-        cache_data = cache[question]
-        if isinstance(cache_data, dict) and "final_answer" in cache_data:
-            # Reconstruct logger for terminal output
-            logger = TraceLogger()
-            logger.current_trace = cache_data
-            logger.print_terminal_trace()
-            return cache_data["final_answer"]
+    if not bypass_cache:
+        cache = load_cache()
+        if question in cache:
+            cache_data = cache[question]
+            if isinstance(cache_data, dict) and "final_answer" in cache_data:
+                # Reconstruct logger for terminal output
+                logger = TraceLogger()
+                logger.current_trace = cache_data
+                logger.print_terminal_trace()
+                return cache_data["final_answer"]
         return cache_data # Legacy string support
 
     logger = TraceLogger()
@@ -231,7 +232,7 @@ def run_agent(question: str) -> str:
             logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
             logger.print_terminal_trace()
             return refusal_msg
-
+        
         choice = response.choices[0]
         
         if choice.finish_reason == CompletionsFinishReason.STOPPED or (choice.message.content and not choice.message.tool_calls):
@@ -352,3 +353,25 @@ if __name__ == "__main__":
         ans = run_agent(query)
         print(f"\nFinal Answer:\n{ans}")
         print("\n(Trace saved to evaluation/logs/)")
+    else:
+        print("\n" + "="*50)
+        print(" MOVIE REASONING AGENT: INTERACTIVE MODE ".center(50, "="))
+        print("="*50)
+        print("Type 'exit' or 'quit' to end the session.\n")
+        
+        while True:
+            try:
+                query = input("[USER]: ").strip()
+                if not query:
+                    continue
+                if query.lower() in ["exit", "quit", "bye"]:
+                    print("Ending session. Goodbye!")
+                    break
+                
+                print("\n[AGENT]: Thinking...")
+                ans = run_agent(query)
+                print(f"\n[AGENT RESPONSE]:\n{ans}\n")
+                print("-" * 50)
+            except (KeyboardInterrupt, EOFError):
+                print("\nEnding session. Goodbye!")
+                break

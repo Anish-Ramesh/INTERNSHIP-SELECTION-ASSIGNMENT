@@ -19,13 +19,13 @@ def clear_directory(folder_path):
 def main():
     print("=== Dataset Preprocessor ===")
     print("Please select an option:")
-    print("1. Use existing datasets (top1000movies.csv and rotten_tomatoes_movies.csv)")
+    print("1. Use existing datasets (DEFAULT - Recommended for Reviewers)")
     print("2. Upload separate primary and secondary custom datasets")
     print("3. Upload a single preprocessed custom dataset containing all columns")
     
     choice = input("\nEnter your choice (1/2/3) [1]: ").strip()
     if choice == '' or choice == '1':
-        print("\n--- Using Existing Datasets ---")
+        print("\n--- Running Option 1: Official Evaluation Track ---")
         primary_path = 'dataset/top1000movies.csv'
         secondary_path = 'dataset/rotten_tomatoes_movies.csv'
         

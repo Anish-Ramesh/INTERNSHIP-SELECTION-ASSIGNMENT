@@ -132,6 +132,15 @@ def run_eval():
     
     total_start = time.time()
     
+    # Cache Toggle (Bonus/Reviewer Feature)
+    use_cache_input = input("\nUse persistent cache for evaluations? (y/n) [y]: ").lower()
+    bypass_cache = use_cache_input == 'n'
+    
+    if bypass_cache:
+        print(">>> CACHE BYPASSED: Running real-time LLM reasoning for all questions.")
+    else:
+        print(">>> CACHE ENABLED: Replaying stored traces for speed/cost efficiency.")
+    
     for i, item in enumerate(EVAL_QUESTIONS, 1):
         print(f"\n[{i}/{len(EVAL_QUESTIONS)}] [{item['category']}]")
         print(f"QUESTION: {item['question']}")
@@ -139,7 +148,7 @@ def run_eval():
         
         start_time = time.time()
         try:
-            answer = run_agent(item["question"])
+            answer = run_agent(item["question"], bypass_cache=bypass_cache)
             duration = time.time() - start_time
             
             # Identify Refusal/Safety success

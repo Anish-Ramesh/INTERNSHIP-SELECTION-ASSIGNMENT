@@ -88,18 +88,30 @@ Initialize the local database and document indices:
 ```bash
 python preprocess.py
 ```
+> [!IMPORTANT]
+> **Evaluators**: When prompted, choose **Option 1 (Default)**. This utilizes the datasets already included in the repository.
 
 ### **2. Running the Agent**
-Execute single-query reasoning from the CLI:
+The agent can be run in two modes:
+
+**Interactive Mode (Recommended for testing)**:
+Engage in a continuous conversation with the agent:
 ```bash
-python agent/agent_loop.py "Who directed Oppenheimer and what is their most recent project?"
+python agent/agent_loop.py
+```
+
+**Single Query Mode**:
+Execute a single reasoning task from the CLI:
+```bash
+python agent/agent_loop.py "Who directed Oppenheimer?"
 ```
 
 ### **3. Comprehensive Evaluation**
 Run the 20-question diagnostic suite:
 ```bash
-python task_D_test.py
+python task_D_20eval_test.py
 ```
+*Note: You will be prompted to use the **Persistent Cache**. Select 'y' to see immediate results from our forensic audit, or 'n' to trigger real-time LLM reasoning (requires API keys).*
 
 ### **4. Corpus Resilience Analysis**
 Verify system performance under data loss (50% corpus):
