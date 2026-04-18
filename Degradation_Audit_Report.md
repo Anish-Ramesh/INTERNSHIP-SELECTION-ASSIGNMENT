@@ -56,7 +56,7 @@ This report reflects the actual performance of the Movie Reasoning Agent across 
 The primary discovery of this test is the Resilience of the Web Fallback. In Q20 (The Host), even when the internal document was missing, the agent did not drop in confidence or accuracy. Instead, it successfully utilized the web_search tool to pull thematic meanings from filmobsessive.com and Senses of Cinema.
 </p>
 <ul>
-    <li><b>Diagnosis:</b> The SOTA protocol treats Web as a primary recovery tool rather than a "last resort."</li>
+    <li><b>Diagnosis:</b> The Production Protocol treats Web as a primary recovery tool rather than a "last resort."</li>
     <li><b>Benefit:</b> This ensures the user receives high-quality answers even during local server outages or data loss.</li>
 </ul>
 

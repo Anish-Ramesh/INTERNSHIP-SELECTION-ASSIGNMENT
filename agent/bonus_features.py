@@ -8,7 +8,7 @@ from azure.ai.inference.models import SystemMessage
 # BONUS A: STRATEGIC REASONING & PLANNING
 # ==============================================================================
 BONUS_A_SYSTEM_PROMPT = """
-### SOTA REASONING PROTOCOL (Bonus A: Strategic Planning)
+### ADVANCED REASONING PROTOCOL (Bonus A: Strategic Planning)
 For every turn, you MUST follow this internal cycle before calling tools:
 1. STRATEGIC BREAKDOWN: Decompose the user's query into logical sub-tasks.
 2. PLAN: Write a 1-3 sentence justification for your NEXT tool choice. Explain WHY you are using it and WHAT you expect to find.

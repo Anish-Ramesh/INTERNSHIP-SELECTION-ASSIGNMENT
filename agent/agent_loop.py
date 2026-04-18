@@ -98,23 +98,34 @@ TOOL_MAP = {
 
 CACHE_FILE = os.path.join(os.path.dirname(__file__), "response_cache.json")
 
-def load_cache():
-    if os.path.exists(CACHE_FILE):
+def load_cache(cache_path=CACHE_FILE):
+    if os.path.exists(cache_path):
         try:
-            with open(CACHE_FILE, "r") as f:
+            with open(cache_path, "r") as f:
                 return json.load(f)
         except:
             return {}
     return {}
 
-def save_cache(cache):
+def save_cache(cache, cache_path=CACHE_FILE, enable_rollover=False):
+    """
+    Saves cache to disk. If enable_rollover is True and count > 1000, 
+    removes 100 oldest entries (FIFO).
+    """
+    if enable_rollover and len(cache) > 1000:
+        # Remove oldest 100 (dict preserves insertion order since 3.7)
+        keys_to_remove = list(cache.keys())[:100]
+        for k in keys_to_remove:
+            del cache[k]
+        print(f">>> [CACHE OVERFLOW] Removed 100 oldest items. Current size: {len(cache)}")
+
     try:
-        with open(CACHE_FILE, "w") as f:
+        with open(cache_path, "w") as f:
             json.dump(cache, f, indent=4)
     except:
         pass
 
-SYSTEM_PROMPT = """You are a SOTA Movie Reasoning Agent.
+SYSTEM_PROMPT = """You are an Advanced Movie Reasoning Agent.
 Your goal is to provide high-accuracy, grounded, and synthesized answers using movie data.
 
 [DATABASE SCHEMA]
@@ -130,7 +141,7 @@ Your goal is to provide high-accuracy, grounded, and synthesized answers using m
 NEVER leak internal reasoning blocks (THOUGHT, PLAN) to the user.
 """ + BONUS_A_SYSTEM_PROMPT
 
-# SOTA Deduplication Stop Words
+# Advanced Deduplication Stop Words
 AGENT_STOP_WORDS = {
     "movie", "movies", "film", "films", "search", "find", "get", "show", "series", "info", 
     "information", "details", "data", "list", "identify", "tell", "check", "looking"
@@ -165,10 +176,13 @@ def extract_citations(text: str) -> list:
     # Deduplicate while preserving order if possible (set is fine here)
     return list(set(citations))
 
-def run_agent(question: str, bypass_cache: bool = False) -> str:
+def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None) -> str:
     # 1. Check Cache
+    active_cache_path = cache_path or CACHE_FILE
+    is_default_cache = (active_cache_path == CACHE_FILE)
+
+    cache = load_cache(active_cache_path)
     if not bypass_cache:
-        cache = load_cache()
         if question in cache:
             cache_data = cache[question]
             if isinstance(cache_data, dict) and "final_answer" in cache_data:
@@ -183,7 +197,7 @@ def run_agent(question: str, bypass_cache: bool = False) -> str:
     telemetry = TelemetryTracker()
     logger.start_trace(question)
     
-    # SOTA Context Layer
+    # Advanced Context Layer
     context_state = {
         "structured": [],
         "unstructured": [],
@@ -273,7 +287,7 @@ def run_agent(question: str, bypass_cache: bool = False) -> str:
             
             # 2. Update Cache (Store full trace for replay)
             cache[question] = logger.current_trace
-            save_cache(cache)
+            save_cache(cache, cache_path=active_cache_path, enable_rollover=is_default_cache)
             
             return final_answer
             
@@ -293,7 +307,7 @@ def run_agent(question: str, bypass_cache: bool = False) -> str:
                 
                 input_str = args.get("sql_query") if tool_name == "query_data" else args.get("query", "")
                 
-                # KEYWORD DEDUPLICATION (SOTA logic)
+                # KEYWORD DEDUPLICATION (Advanced logic)
                 raw_keywords = tokenize(input_str)
                 query_keywords = frozenset([w for w in raw_keywords if w not in AGENT_STOP_WORDS])
                 

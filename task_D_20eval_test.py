@@ -141,6 +141,8 @@ def run_eval():
     else:
         print(">>> CACHE ENABLED: Replaying stored traces for speed/cost efficiency.")
     
+    EVAL_CACHE = os.path.join("agent", "eval_cache.json")
+    
     for i, item in enumerate(EVAL_QUESTIONS, 1):
         print(f"\n[{i}/{len(EVAL_QUESTIONS)}] [{item['category']}]")
         print(f"QUESTION: {item['question']}")
@@ -148,7 +150,7 @@ def run_eval():
         
         start_time = time.time()
         try:
-            answer = run_agent(item["question"], bypass_cache=bypass_cache)
+            answer = run_agent(item["question"], bypass_cache=bypass_cache, cache_path=EVAL_CACHE)
             duration = time.time() - start_time
             
             # Identify Refusal/Safety success
