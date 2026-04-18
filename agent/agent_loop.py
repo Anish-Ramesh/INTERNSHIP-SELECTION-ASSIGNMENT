@@ -1,4 +1,8 @@
+import sys
 import os
+# Add project root to sys.path for direct script execution
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import json
 import re
 import time
@@ -173,7 +177,7 @@ def run_agent(question: str, bypass_cache: bool = False) -> str:
                 logger.current_trace = cache_data
                 logger.print_terminal_trace()
                 return cache_data["final_answer"]
-        return cache_data # Legacy string support
+            return cache_data # Legacy string support
 
     logger = TraceLogger()
     telemetry = TelemetryTracker()
