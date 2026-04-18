@@ -16,7 +16,8 @@ class TraceLogger:
             "final_answer": None,
             "citations": [],
             "number_of_steps": 0,
-            "refused": False
+            "refused": False,
+            "telemetry": {}
         }
 
     def log_step(self, tool_name: str, tool_input: str, tool_output: str, rationale: str = None):
@@ -32,6 +33,10 @@ class TraceLogger:
         }
         self.current_trace["steps"].append(step)
         self.current_trace["number_of_steps"] += 1
+
+    def set_telemetry(self, telemetry_data: dict):
+        if self.current_trace:
+            self.current_trace["telemetry"] = telemetry_data
 
     def finish_trace(self, final_answer: str, citations: list, refused: bool = False):
         if not self.current_trace:
@@ -54,9 +59,9 @@ class TraceLogger:
         if not self.current_trace:
             return
             
-        print("\n" + "█"*80)
+        print("\n" + "#"*80)
         print(f" QUESTION: {self.current_trace['question']}")
-        print("█"*80)
+        print("#"*80)
         
         for step in self.current_trace["steps"]:
             # Truncate output slightly for terminal readability, but keep it generous 
@@ -71,13 +76,13 @@ class TraceLogger:
             print(f"RESULT:\n{out_str}")
             print("-" * 60)
             
-        print(f"\n" + "▼ " * 20 + " FINAL AGENT RESPONSE " + "▼ " * 20)
+        print(f"\n" + "v " * 20 + " FINAL AGENT RESPONSE " + "v " * 20)
         print(f"{self.current_trace['final_answer']}")
-        print("▲ " * 20 + " END OF RESPONSE " + "▲ " * 20)
+        print("^ " * 20 + " END OF RESPONSE " + "^ " * 20)
         
         # Format citations simply as a comma separated list
         citations = ", ".join(self.current_trace.get("citations", [])) or "None"
         print(f"\nCITATIONS: {citations}")
         print(f"STEP COUNT: {self.current_trace['number_of_steps']} / 8 max")
-        print("█"*80 + "\n")
+        print("#"*80 + "\n")
 

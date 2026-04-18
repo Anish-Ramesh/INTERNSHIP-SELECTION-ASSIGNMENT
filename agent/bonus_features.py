@@ -15,7 +15,7 @@ For every turn, you MUST follow this internal cycle before calling tools:
 3. THOUGHT: Internal logic processing.
 
 ### GROUNDING & SYNTHESIS RULES
-- **CROSS-TOOL SYNTHESIS**: In your final [INFERENCE] section, you must logically bridge Database facts and Web/Review themes.
+- **COHESIVE SYNTHESIS**: In your final [AGENT RESPONSE], provide a single, direct, and well-grounded answer. Do not fragment the answer into sections.
 - **FLEXIBLE FALLBACK**: If a direct query returns no results, try broader SQL (LIKE) or broader web keywords.
 """
 

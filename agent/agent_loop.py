@@ -92,6 +92,24 @@ TOOL_MAP = {
     "web_search": web_search
 }
 
+CACHE_FILE = os.path.join(os.path.dirname(__file__), "response_cache.json")
+
+def load_cache():
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r") as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_cache(cache):
+    try:
+        with open(CACHE_FILE, "w") as f:
+            json.dump(cache, f, indent=4)
+    except:
+        pass
+
 SYSTEM_PROMPT = """You are a SOTA Movie Reasoning Agent.
 Your goal is to provide high-accuracy, grounded, and synthesized answers using movie data.
 
@@ -99,12 +117,9 @@ Your goal is to provide high-accuracy, grounded, and synthesized answers using m
 - title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score.
 
 [OUTPUT FORMAT]
-[DATABASE]
-- (Citations)
-[WEB]
-- (Web facts)
-[INFERENCE]
-- (Synthesis)
+[AGENT RESPONSE]
+(A direct, cohesive, and grounded answer to the question. BE CONCISE. Avoid conversational filler.)
+
 [CONFIDENCE]
 - (Level: High/Medium/Low)
 
@@ -120,9 +135,9 @@ AGENT_STOP_WORDS = {
 def clean_final_answer(text: str) -> str:
     """Strip internal reasoning blocks (STRATEGIC BREAKDOWN, THOUGHT, PLAN, etc.) from the final response."""
     # Remove STRATEGIC BREAKDOWN:, THOUGHT:, PLAN:
-    text = re.sub(r"(?i)STRATEGIC BREAKDOWN:.*?(?=THOUGHT:|PLAN:|\[DATABASE\]|$)", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)THOUGHT:.*?(?=PLAN:|\[DATABASE\]|$)", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)PLAN:.*?(?=\[DATABASE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)STRATEGIC BREAKDOWN:.*?(?=THOUGHT:|PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)THOUGHT:.*?(?=PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)PLAN:.*?(?=\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
     return text.strip()
 
 def normalize_output(result: any, max_len: int = 2000) -> str:
@@ -147,6 +162,18 @@ def extract_citations(text: str) -> list:
     return list(set(citations))
 
 def run_agent(question: str) -> str:
+    # 1. Check Cache
+    cache = load_cache()
+    if question in cache:
+        cache_data = cache[question]
+        if isinstance(cache_data, dict) and "final_answer" in cache_data:
+            # Reconstruct logger for terminal output
+            logger = TraceLogger()
+            logger.current_trace = cache_data
+            logger.print_terminal_trace()
+            return cache_data["final_answer"]
+        return cache_data # Legacy string support
+
     logger = TraceLogger()
     telemetry = TelemetryTracker()
     logger.start_trace(question)
@@ -200,6 +227,7 @@ def run_agent(question: str) -> str:
             )
         except Exception as e:
             refusal_msg = f"Execution interrupted: {str(e)}"
+            logger.set_telemetry(telemetry.get_summary())
             logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
             logger.print_terminal_trace()
             return refusal_msg
@@ -218,19 +246,30 @@ def run_agent(question: str) -> str:
             )
             reflection = reflect_on_answer(client, MODEL_NAME, question, final_answer, curated_knowledge[:2000])
             
-            if "[FAIL]" in reflection:
+            if "[FAIL]" in reflection and not context_state.get("has_reflected", False):
                 # If reflection fails, we add one emergency turn (Bonus C)
-                reflection_msg = f"\n\n[SELF-REFLECTION CRITIQUE]: {reflection}"
-                # We could resume the loop here if we wanted to be even more aggressive.
-                # For now, we append the critique as a silent correction.
-                final_answer += reflection_msg
+                context_state["has_reflected"] = True
+                reflection_msg = f"[SELF-REFLECTION CRITIQUE]: {reflection}\n\nPlease use your tools to address these missing points or corrections before providing a FINAL answer."
+                messages.append(UserMessage(content=reflection_msg))
+                step_count += 1
+                continue # Trigger one more loop attempt
+            
+            if "[FAIL]" in reflection:
+                # If it still fails after reflection, we just append the notice and finish
+                final_answer += f"\n\n[SELF-REFLECTION CRITIQUE]: {reflection}"
 
             granular_citations = extract_citations(final_answer)
             if not granular_citations:
                 granular_citations = list(set([step["tool_name"] for step in logger.current_trace["steps"]]))
             
+            logger.set_telemetry(telemetry.get_summary())
             logger.finish_trace(final_answer=final_answer, citations=granular_citations)
             logger.print_terminal_trace()
+            
+            # 2. Update Cache (Store full trace for replay)
+            cache[question] = logger.current_trace
+            save_cache(cache)
+            
             return final_answer
             
         elif choice.finish_reason == CompletionsFinishReason.TOOL_CALLS:
@@ -300,6 +339,7 @@ def run_agent(question: str) -> str:
             break
             
     refusal_msg = "Could not find answer within 8 steps."
+    logger.set_telemetry(telemetry.get_summary())
     logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
     logger.print_terminal_trace()
     return refusal_msg

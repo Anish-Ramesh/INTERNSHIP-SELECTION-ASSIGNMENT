@@ -1,39 +1,39 @@
-# Secrets
+# Secrets & Credentials
 .env
 
-# Personal Scratch Scripts
+# Personal & Scratch Scripts
 a.py
-dataset\movie_dataset.csv
 test_bm25.py
 task_SOTA_test.py
 task_D_behavioral_test.py
 degradation_test_report.md
+scratch/
 
-# Python Cache
+# Python Environment & Cache
+venv/
 __pycache__/
 *.pyc
 
-# Local Data & Databases
+# Local Data & Generated Databases
 data/*.db
-data/database.db
+database_processed.db
+*.sqlite
 
-# Large raw datasets (Keep only the processed movies_structured.csv)
+# Large Raw Datasets (Kept filtered source only)
 dataset/rotten_tomatoes_movies.csv
 dataset/top1000movies.csv
 
-# Evaluation Logs
+# Agent & Evaluation Ephemera (Regeneratable)
+agent/response_cache.json
 evaluation/logs/
+evaluation/*.json
+dataset/unstructured_reviews_backup/
+evaluation_report.md
 
-# IDE settings
+# IDE & OS Metadata
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
 *.swp
 *.swo
-
-# Output & Evaluation Files
-*.txt
-evaluation/logs/
-data/*.db
-data/database.db
-database_processed.db
-evaluation_report.md

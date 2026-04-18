@@ -8,7 +8,17 @@
     <strong>Project:</strong> Agentic RAG over Mixed Data Sources<br>
     <strong>By:</strong> Anish R<br>
     <strong>Date:</strong> 18-04-2026
-</div>
+<hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+### **Navigation Index**
+- [1. Audit Overview](#1-audit-overview)
+- [2. Evidence-Based Question Matrix](#2-evidence-based-question-matrix)
+- [3. Findings & Performance Reflection](#3-findings--performance-reflection)
+- [4. Critical Self-Assessment](#4-critical-self-assessment-opportunities-for-improvement)
+- [5. Diagnosis & Future Solutions](#5-diagnosis--future-solutions)
+- [6. Bonus C: Reflection Impact](#6-bonus-c-reflection-impact)
+
+<hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
 <div style="font-size: 12pt;">
 
