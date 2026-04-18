@@ -1,6 +1,18 @@
 # Movie Reasoning Agent: Agentic RAG System
 **Repo URL:** [https://github.com/Anish-Ramesh/INTERNSHIP-SELECTION-ASSIGNMENT](https://github.com/Anish-Ramesh/INTERNSHIP-SELECTION-ASSIGNMENT)
 
+---
+
+## 0. Selected Track: Option C - Movies Corpus
+
+As per the assignment instructions, this project implements the **Movies Corpus (Option C)** track:
+- **Corpus**: 10–15 long-form film reviews from reputable publications.
+- **Unstructured Data**: Review texts preserved as plain text files in `dataset/unstructured_reviews/`.
+- **Structured Data**: Box-office data (budget, opening weekend, worldwide gross, Rotten Tomatoes score) managed via SQLite.
+- **Web**: Integration of live web search (Tavily) for recent awards news and director updates.
+
+---
+
 An advanced **Agentic Reasoning RAG system** designed to solve complex, multi-tool movie queries. Built on a modular reasoning architecture (ReAct), this system integrates structured SQL data, unstructured document search, and real-time web retrieval to provide grounded, citation-heavy answers.
 
 ---
@@ -163,7 +175,7 @@ The system includes three comprehensive reports documenting performance, cost, a
 The codebase has been scanned for potential secrets and vulnerabilities:
 ```bash
 gitleaks detect --source . -v
-# Result: 8 commits scanned. No leaks found.
+# Result: 10 commits scanned. No leaks found.
 ```
 
 ---
