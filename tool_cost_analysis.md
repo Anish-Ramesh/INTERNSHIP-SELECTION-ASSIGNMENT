@@ -43,11 +43,13 @@ The system currently operates at an average cost of **$0.01 per complex query**.
 |:---|:---|:---|
 | **High Web Latency** | Web-heavy queries (like Q5) take 10s+. | **Prompt Gating**: Only escalate to Web after a high-confidence DB "Not Found" signal to avoid redundant local doc scanning. |
 | **Token Exhaustion** | Long review documents increase prompt size. | **Context Truncation**: We currently use a 1,200-character limit per result to ensure the context window remains under 128K for the GPT-4.1-mini class. |
-| **Rate Limiting** | Rapid execution of 60+ questions risks TPM limits. | **Batching & Jitter**: The `task_D_subset_test` includes a 2-second sleep between queries to prevent API rejection. |
+| **Rate Limiting** | Rapid execution of 60+ questions risks TPM limits. | **Batching & Jitter**: The `task_D_subset_test` includes a 2-second sleep between queries to prevent API rejection. Persistent LLM accounts may face exhaustion after 60-80 high-depth requests; production deployments require billing-enabled accounts with higher rate limits. |
 
 ---
 
 ## 5. Final Conclusion
+The Agentic RAG system demonstrates extreme fiscal efficiency, maintaining production-grade accuracy while utilizing less than 10% of the allocated ₹1,500 budget. By prioritizing local structural data (SQL) and unstructured reviews (BM25) before escalating to live web search, we have balanced cost-per-query with high-depth reasoning capabilities.
+
 ---
 
 ## 6. Budget Compliance & Caching Strategy

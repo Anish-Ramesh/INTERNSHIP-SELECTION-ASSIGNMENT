@@ -565,6 +565,12 @@ The **[Degradation Audit Report (Degradation_Audit_Report.md)](Degradation_Audit
 *   **Automatic Tool Shifting**: When the internal `Avatar.txt` document was removed, the agent successfully shifted its first attempt from `search_docs` to `web_search`.
 *   **Consistency Retention**: In 95% of cases, the final answer was nearly identical to the baseline, maintaining grounding from external sources.
 
+### **Observed Negatives & Mitigation:**
+*   **Step Efficiency Gap**: In missing-data scenarios, the agent occasionally attempted redundant SQL variations before escalating to Web (e.g., Q11 took 5 steps vs. 4).
+    *   **Solution**: Implemented **Query Deduplication logic** in `agent_loop.py` to prevent repeated attempts of similar semantic queries.
+*   **Latency Spikes**: High reliance on external fallbacks increased average response time by ~30% for unrecorded titles.
+    *   **Solution**: Added **Persistent Caching** to ensure that once a web fallback is processed, the cost and latency are zeroed for subsequent requests.
+
 ---
 
 ## 9. Conclusion
