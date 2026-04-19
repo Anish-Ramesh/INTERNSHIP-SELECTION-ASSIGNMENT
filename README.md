@@ -1,196 +1,83 @@
-# Movie Reasoning Agent: Agentic RAG System
-**Repo URL:** [https://github.com/Anish-Ramesh/INTERNSHIP-SELECTION-ASSIGNMENT](https://github.com/Anish-Ramesh/INTERNSHIP-SELECTION-ASSIGNMENT)
+# Movie Reasoning Agent: Agentic RAG Implementation
 
----
+This repository contains an advanced **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie dataset. The system utilizes the **ReAct (Reasoning + Acting)** pattern to dynamically interact with structured databases, unstructured document indices, and real-time web search.
 
-## 0. Selected Track: Option C - Movies Corpus
+## 1. System Overview
 
-As per the assignment instructions, this project implements the **Movies Corpus (Option C)** track:
-- **Corpus**: 10–15 long-form film reviews from reputable publications.
-- **Unstructured Data**: Review texts preserved as plain text files in `dataset/unstructured_reviews/`.
-- **Structured Data**: Box-office data (budget, opening weekend, worldwide gross, Rotten Tomatoes score) managed via SQLite.
-- **Web**: Integration of live web search (Tavily) for recent awards news and director updates.
+The agent is designed as a "Reasoning Engine" that solves multi-domain queries by bridging disparate data sources. It treats movie analysis as a search-space problem, escalating through tools in a prioritized order:
+1. **Internal Structured Data**: SQLite for financial metrics and metadata.
+2. **Internal Unstructured Data**: BM25-based semantic retrieval for thematic critiques.
+3. **Web Fallback**: Real-time retrieval via Tavily for fringe facts or recent updates.
 
----
+## 2. Technical Stack
 
-An advanced **Agentic Reasoning RAG system** designed to solve complex, multi-tool movie queries. Built on a modular reasoning architecture (ReAct), this system integrates structured SQL data, unstructured document search, and real-time web retrieval to provide grounded, citation-heavy answers.
+- **Reasoning Loop**: Azure AI Inference SDK (Powered by GitHub Models / GPT-4o-mini).
+- **Structured Retrieval**: SQLite + Pandas.
+- **Unstructured Retrieval**: Rank-BM25 on localized movie review documents.
+- **Web Search**: Tavily Search API.
+- **State Management**: Persistent JSON-based trace caching for cost and latency optimization.
 
----
+## 3. Quick Start (Setup)
 
-## 1. Technology Stack
+The project includes a single-command setup script to initialize the environment and process the data.
 
-- **Language**: Python 3.9+
-- **Inference**: [GitHub Models](https://github.com/marketplace/models) (Azure AI Inference SDK)
-- **Architecture**: Modular ReAct (Reasoning + Acting) pattern
-- **Retrieval Engine**:
-  - **Structured**: SQLite (via Pandas SQL interface)
-  - **Unstructured**: BM25 (Rank-BM25)
-  - **Web**: Tavily Search API
-- **Data Handling**: Pandas, JSON, CSV
-- **Security**: Gitleaks (Credentials Scanning)
-
----
-
-## 2. Core Architecture: Modular Agent Design
-
-This project utilizes a **Modular Agent Architecture** to ensure high readability and reproducibility:
-- **Separation of Concerns**: Agent logic, tools, data handlers, and evaluation modules are strictly distinct.
-- **Traceability**: Every reasoning step is logged with rationales, inputs, and outputs in high-fidelity JSON.
-- **Scaleability**: Independent tools allow for easy integration of new data sources without modifying the core agent loop.
-
----
-
-## 3. Dataset Sources
-
-The system is grounded in a hybrid dataset curated from the following sources:
-1. **Unstructured Reviews**: [Rotten Tomatoes Movie & Critic Reviews](https://www.kaggle.com/datasets/stefanoleone992/rotten-tomatoes-movies-and-critic-reviews-dataset?select=rotten_tomatoes_movies.csv)
-2. **Structured Metadata**: [Top 1000 Movies by Worldwide Gross](https://www.kaggle.com/datasets/crisleyoliveira/top1000moviesgross)
-
----
-
-## 4. Setup & Installation
-
-### **Prerequisites**
-- Python 3.9+
-- [GitHub Personal Access Token](https://github.com/settings/tokens) (for GitHub Models)
-- [Tavily API Key](https://tavily.com/) (for web search)
-
-### **Installation Guide**
-For Windows (PowerShell), MacOS (Terminal), or Linux (Bash):
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Anish-Ramesh/INTERNSHIP-SELECTION-ASSIGNMENT
-   cd INTERNSHIP-SELECTION-ASSIGNMENT
-   ```
-2. **Setup virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Windows: .\venv\Scripts\Activate.ps1
-   ```
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### **Configure Environment**
-Create a `.env` file from the example:
+### **One-Step Installation**
+Ensure you have Python 3.9+ and pip installed, then run:
 ```bash
-cp .env.example .env
-# Edit .env with your GITHUB_TOKEN and TAVILY_API_KEY
+python setup_project.py
+```
+This script will:
+- **Create a virtual environment (`venv`)** automatically.
+- Install all dependencies from `requirements.txt` into the `venv`.
+- Execute `preprocess.py` using the `venv` interpreter to bridge the raw datasets into a queryable SQLite database and BM25 document collection.
+
+### **Configuration**
+Create a `.env` file in the root directory:
+```bash
+GITHUB_TOKEN=your_token_here
+TAVILY_API_KEY=your_key_here
 ```
 
----
+## 4. Operational Modes
 
-## 5. Execution & Analysis
-
-### **1. Data Preprocessing**
-Initialize the local database and document indices:
-```bash
-python preprocess.py
-```
-> [!IMPORTANT]
-> **Evaluators**: When prompted, choose **Option 1 (Default)**. This utilizes the datasets already included in the repository.
-
-### **2. Running the Agent**
-The agent can be run in two modes:
-
-**Interactive Mode (Recommended for testing)**:
-Engage in a continuous conversation with the agent:
+### **A. Interactive REPL (Agent)**
+Continuous conversation mode with full reasoning trace visibility.
 ```bash
 python agent/agent_loop.py
 ```
+*Type 'exit' or 'quit' to terminate the session.*
 
-**Single Query Mode**:
-Execute a single reasoning task from the CLI:
+### **B. Single Query Mode**
+Execute a direct reasoning task from the command line.
 ```bash
-python agent/agent_loop.py "Who directed Oppenheimer?"
+python agent/agent_loop.py "Who directed the 2006 film 'The Host' and what is its Rotten Tomatoes score?"
 ```
 
-### **3. Comprehensive Evaluation**
-Run the 20-question diagnostic suite:
+## 5. Evaluation & Audit
+
+### **20-Question Diagnostic Suite**
+To verify system accuracy, grounding, and safety, run the comprehensive evaluation suite:
 ```bash
 python task_D_20eval_test.py
 ```
-*Note: You will be prompted to use the **Persistent Cache**. Select 'y' to see immediate results from our forensic audit, or 'n' to trigger real-time LLM reasoning (requires API keys).*
+Aggregated results are saved to `evaluation/task_D_results.json`.
 
-### **4. Corpus Resilience Analysis**
-Verify system performance under data loss (50% corpus):
+### **Corpus Degradation Audit (Resilience Test)**
+This script verifies the system's ability to maintain accuracy using external fallbacks when 50% of the internal document corpus is removed.
 ```bash
-python agent/degradation_runner.py
-```
-*Tip: This runner compares "Normal" vs "Degraded" performance to validate web-fallback reliability.*
-
----
-
-## 6. Project Structure
-
-```text
-.
-├── agent/
-│   ├── agent_loop.py        # Core reasoning loop
-│   ├── bonus_features.py    # Telemetry & Reflection recovery
-│   ├── degradation_runner.py# Corpus resilience analyzer
-│   └── response_cache.json  # Persistent full-trace caching
-├── dataset/
-│   ├── unstructured_reviews/# Source .txt review files
-│   ├── movies_structured.csv# Filtered SQL dataset
-│   ├── top1000movies.csv     # Raw structured source
-│   └── rotten_tomatoes_movies.csv # Raw unstructured source
-├── evaluation/
-│   ├── logs/                # Step-by-step reasoning traces
-│   ├── task_D_results.json  # Evaluation suite metrics
-│   └── degradation_comparison.json # Resilience audit data
-├── tools/
-│   ├── query_data.py        # SQLite interface
-│   ├── search_docs.py       # BM25 RAG interface
-│   └── web_search.py        # Tavily interface
-├── utils/
-│   └── logger.py            # Trace management
-├── task_A_test.py           # Single-tool verification script
-├── task_B_test.py           # Multi-tool verification script
-├── task_C_test.py           # Cross-dataset verification script
-├── task_D_test.py           # 20-question evaluation runner
-├── preprocess.py            # Ingestion & Indexing script
-├── requirements.txt         # Project dependencies
-├── .env.example             # Template for API credentials
-├── .gitignore               # Standard exclusions (venv, __pycache__)
-├── EVALUATION.md            # Comprehensive test analysis report
-├── Degradation_Audit_Report.md # Resilience & Forensic audit
-├── tool_cost_analysis.md    # Token usage & Budget telemetry
-└── README.md                # (You are here)
+python degradation_runner.py
 ```
 
----
+## 6. Known Failure Modes & Limitations
 
-## 7. Key Audit & Evaluation Reports
+An honest assessment of the current architecture identifies the following behavior boundaries:
 
-The system includes three comprehensive reports documenting performance, cost, and resilience:
-
-### **[1. Evaluation Report (EVALUATION.md)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/EVALUATION.md)**
-- **Focus**: Accuracy across 20 diverse reasoning questions.
-- **Key Takeaway**: Achieved a **75% success rate** with 100% grounding for retrieved facts. 
-- **Features**: Detailed ReAct traces for every answer and a breakdown of failure modes (Safety Drift).
-
-### **[2. Degradation Audit (Degradation_Audit_Report.md)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/Degradation_Audit_Report.md)**
-- **Focus**: Forensic analysis of system behavior with **50% corpus removal**.
-- **Key Takeaway**: Proved **100% Accuracy Retention** by successfully automating web-fallback when internal reviews were missing.
-- **Features**: Before/After step-count comparisons and delta behavioral analysis.
-
-### **[3. Tool Cost Analysis (tool_cost_analysis.md)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/tool_cost_analysis.md)**
-- **Focus**: Operational telemetry, token consumption, and budget mapping.
-- **Key Takeaway**: Project spend remains **< 10% of the ₹1,500 budget**, largely due to **Persistent Full-Trace Caching**.
-- **Features**: Per-tool latency tracking and estimated USD cost-per-query.
+1. **Safety-Helpfulness Drift**: In "Refusal" scenarios (e.g., medical or financial advice), the model occasionally provides general news trends from the web before stating a refusal. This is an artifact of the "Helpfulness" instruction in the underlying LLM.
+2. **Semantic Entity Conflict**: Queries for generic titles (e.g., "The Host") may resolve to different film versions if not explicitly disambiguated in the user prompt.
+3. **Token Budget Truncation**: For extremely large SQL result sets (>100 rows), only the top results are prioritized for reasoning to prevent context window overflow.
+4. **Step Budget Hard Cap**: The agent is strictly limited to **8 tool calls** to prevent infinite recursion in loops. Queries requiring deeper chains will terminate with an error.
 
 ---
 
-## 8. Security & Compliance
-The codebase has been scanned for potential secrets and vulnerabilities:
-```bash
-gitleaks detect --source . -v
-# Result: 10 commits scanned. No leaks found.
-```
-
----
-
-## 9. AI Disclosure
-Developed with the assistance of the **Antigravity AI Agent** and **ChatGPT**. Architectural decisions, tiered escalation logic, and diagnostic runners were pair-programmed and verified for technical accuracy.
+## 7. AI Disclosure
+This project was co-developed with **Antigravity**, a powerful AI coding agent. Architectural decisions, multi-tool orchestration logic, and forensic audit runners were pair-programmed to ensure high-fidelity reproducible code.

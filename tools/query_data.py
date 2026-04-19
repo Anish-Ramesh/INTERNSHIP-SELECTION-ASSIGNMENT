@@ -49,11 +49,17 @@ class QueryDataTool:
                 return "Query executed successfully but returned no results."
                 
             # TRUNCATION OPTIMIZATION: Max 10 rows returned to prevent LLM context 8k limit overflow 
-            if len(df) > 10:
+            total_rows = len(df)
+            if total_rows > 10:
                 df = df.head(10)
-                return df.to_markdown(index=False) + "\n\n...(Output truncated to first 10 rows for brevity limit)."
                 
-            return df.to_markdown(index=False)
+            results_markdown = df.to_markdown(index=False)
+            row_count_msg = f"\n\n*Result: {total_rows} rows found.*"
+            
+            if total_rows > 10:
+                 return results_markdown + row_count_msg + "\n...(Output truncated to first 10 rows for brevity limit)."
+                 
+            return results_markdown + row_count_msg
             
         except Exception as e:
             return f"Error executing SQL query: {str(e)}"

@@ -13,17 +13,26 @@ from azure.ai.inference.models import (
     UserMessage, 
     AssistantMessage, 
     ToolMessage,
-    CompletionsFinishReason,
-    ChatCompletionsToolDefinition, 
-    FunctionDefinition
+    CompletionsFinishReason
 )
 from azure.core.credentials import AzureKeyCredential
 
-from tools.search_docs import search_docs, tokenize
-from tools.query_data import query_data
-from tools.web_search import web_search
 from utils.logger import TraceLogger
 from agent.bonus_features import BONUS_A_SYSTEM_PROMPT, TelemetryTracker, reflect_on_answer
+
+# New Modular Imports
+from agent.tools_config import TOOLS, TOOL_MAP
+from agent.agent_utils import (
+    clean_final_answer, 
+    normalize_output, 
+    extract_citations, 
+    AGENT_STOP_WORDS,
+    tokenize,
+    load_cache,
+    save_cache,
+    RESPONSE_CACHE_PATH
+)
+from agent.prompts import SYSTEM_PROMPT
 
 load_dotenv()
 
@@ -38,143 +47,10 @@ client = ChatCompletionsClient(
 )
 MODEL_NAME = "openai/gpt-4.1-mini" # or whatever you have mapped via proxy
 
-# Strict Tool Definitions reflecting exactly our guardrails from Phase 1
-TOOLS = [
-     ChatCompletionsToolDefinition(
-         function=FunctionDefinition(
-             name="search_docs",
-             description="Semantic search over unstructured documents (movie reviews). Use this for subjective opinions, themes, explanations, or questions about the plot. DO NOT Use for numerical data.",
-             parameters={
-                 "type": "object",
-                 "properties": {
-                     "query": {
-                         "type": "string",
-                         "description": "Natural language query string."
-                     }
-                 },
-                 "required": ["query"]
-             }
-         )
-     ),
-     ChatCompletionsToolDefinition(
-         function=FunctionDefinition(
-             name="query_data",
-             description="Query the structured financial / stats table for movies. The table contains the following columns: [title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score]. Use this for numbers, rankings, or comparisons of these fields.",
-             parameters={
-                 "type": "object",
-                 "properties": {
-                     "sql_query": {
-                         "type": "string",
-                         "description": "A valid read-only SQLite query to run against the 'movies' table."
-                     }
-                 },
-                 "required": ["sql_query"]
-             }
-         )
-     ),
-     ChatCompletionsToolDefinition(
-         function=FunctionDefinition(
-             name="web_search",
-             description="Search the live web for recent information (e.g. recent awards news, director updates).",
-             parameters={
-                 "type": "object",
-                 "properties": {
-                     "query": {
-                         "type": "string",
-                         "description": "A short search query string (under 10 words)."
-                     }
-                 },
-                 "required": ["query"]
-             }
-         )
-     )
-]
+# (Cache logic moved to agent/cache/__init__.py)
+CACHE_FILE = RESPONSE_CACHE_PATH
 
-TOOL_MAP = {
-    "search_docs": search_docs,
-    "query_data": query_data,
-    "web_search": web_search
-}
-
-CACHE_FILE = os.path.join(os.path.dirname(__file__), "response_cache.json")
-
-def load_cache(cache_path=CACHE_FILE):
-    if os.path.exists(cache_path):
-        try:
-            with open(cache_path, "r") as f:
-                return json.load(f)
-        except:
-            return {}
-    return {}
-
-def save_cache(cache, cache_path=CACHE_FILE, enable_rollover=False):
-    """
-    Saves cache to disk. If enable_rollover is True and count > 1000, 
-    removes 100 oldest entries (FIFO).
-    """
-    if enable_rollover and len(cache) > 1000:
-        # Remove oldest 100 (dict preserves insertion order since 3.7)
-        keys_to_remove = list(cache.keys())[:100]
-        for k in keys_to_remove:
-            del cache[k]
-        print(f">>> [CACHE OVERFLOW] Removed 100 oldest items. Current size: {len(cache)}")
-
-    try:
-        with open(cache_path, "w") as f:
-            json.dump(cache, f, indent=4)
-    except:
-        pass
-
-SYSTEM_PROMPT = """You are an Advanced Movie Reasoning Agent.
-Your goal is to provide high-accuracy, grounded, and synthesized answers using movie data.
-
-[DATABASE SCHEMA]
-- title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score.
-
-[OUTPUT FORMAT]
-[AGENT RESPONSE]
-(A direct, cohesive, and grounded answer to the question. BE CONCISE. Avoid conversational filler.)
-
-[CONFIDENCE]
-- (Level: High/Medium/Low)
-
-NEVER leak internal reasoning blocks (THOUGHT, PLAN) to the user.
-""" + BONUS_A_SYSTEM_PROMPT
-
-# Advanced Deduplication Stop Words
-AGENT_STOP_WORDS = {
-    "movie", "movies", "film", "films", "search", "find", "get", "show", "series", "info", 
-    "information", "details", "data", "list", "identify", "tell", "check", "looking"
-}
-
-def clean_final_answer(text: str) -> str:
-    """Strip internal reasoning blocks (STRATEGIC BREAKDOWN, THOUGHT, PLAN, etc.) from the final response."""
-    # Remove STRATEGIC BREAKDOWN:, THOUGHT:, PLAN:
-    text = re.sub(r"(?i)STRATEGIC BREAKDOWN:.*?(?=THOUGHT:|PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)THOUGHT:.*?(?=PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
-    text = re.sub(r"(?i)PLAN:.*?(?=\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
-    return text.strip()
-
-def normalize_output(result: any, max_len: int = 2000) -> str:
-    """Clean and truncate tool outputs for the context layer."""
-    clean = str(result).strip()
-    if len(clean) > max_len:
-        return clean[:max_len] + "\n...[truncated for context]"
-    return clean
-
-def extract_citations(text: str) -> list:
-    """Extract granular citation identifiers from the final answer text."""
-    patterns = [
-        r"\[Source: [^\]]+, Page: \d+\]",
-        r"\[Web Source \d+\]",
-        r"\[Table: movies, Row: [^\]]+\]"
-    ]
-    citations = []
-    for pattern in patterns:
-        matches = re.findall(pattern, text)
-        citations.extend(matches)
-    # Deduplicate while preserving order if possible (set is fine here)
-    return list(set(citations))
+# (Utility functions and AGENT_STOP_WORDS moved to agent/agent_utils.py)
 
 def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None) -> str:
     # 1. Check Cache
@@ -369,8 +245,7 @@ if __name__ == "__main__":
         query = " ".join(sys.argv[1:])
         print(f"Question: {query}")
         ans = run_agent(query)
-        print(f"\nFinal Answer:\n{ans}")
-        print("\n(Trace saved to evaluation/logs/)")
+        # Trace saved to evaluation/logs/ (printed inside run_agent)
     else:
         print("\n" + "="*50)
         print(" MOVIE REASONING AGENT: INTERACTIVE MODE ".center(50, "="))
@@ -387,8 +262,7 @@ if __name__ == "__main__":
                     break
                 
                 print("\n[AGENT]: Thinking...")
-                ans = run_agent(query)
-                print(f"\n[AGENT RESPONSE]:\n{ans}\n")
+                run_agent(query)
                 print("-" * 50)
             except (KeyboardInterrupt, EOFError):
                 print("\nEnding session. Goodbye!")
