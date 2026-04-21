@@ -2,7 +2,6 @@
 
 [![Project Status](https://img.shields.io/badge/Status-Evaluation--Ready-brightgreen)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/EVALUATION.md)
 [![Data Track](https://img.shields.io/badge/Track-Option_C-blue)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/dataset/unstructured_reviews)
-[![Audit Score](https://img.shields.io/badge/Audit_Score-100%2F100-gold)](file:///C:/Users/Anish/.gemini/antigravity/brain/78bf886a-9de0-4e71-b36f-6ed464269a7b/AUDIT_SCORING.md)
 
 This repository contains a state-of-the-art **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie corpus. Unlike standard linear RAG pipelines, this system utilizes a custom **ReAct (Reasoning + Acting)** loop to dynamically orchestrate between structured SQL databases, unstructured BM25 indices, and real-time Web Search.
 
