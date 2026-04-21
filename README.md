@@ -153,7 +153,7 @@ The system was evaluated against a rigorous 20-question suite covering Single-To
 | **Overall Accuracy** | **75%** | Exceptionally high for multi-step reasoning. |
 | **Grounding Rate** | **100%** | Zero hallucinations; all facts are cited. |
 | **Failure Mode Resilience** | **Excellent** | Agent gracefully falls back to Web when Local Data is missing. |
-| **Avg. Query Cost** | **$0.012** | Highly efficient tiered data escalation. |
+| **Avg. Query Cost** | **$0.012 (₹1.01)** | Highly efficient tiered data escalation. |
 
 Full 20-question traces and forensic failure analysis can be found in **[EVALUATION.md](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/EVALUATION.md)**.
 

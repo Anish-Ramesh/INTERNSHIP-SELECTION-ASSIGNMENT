@@ -18,22 +18,22 @@ By comparing the "Baseline" run (100% data) with the "Degraded" run (50% data), 
 
 | Tool Name | Call Count (5 Qs) | Avg. Latency | Multi-Turn Token Cost (Est) | External API Cost | Total Cost Impact |
 |:---|:---|:---|:---|:---|:---|
-| **SQL Query** | 8 | ~0.8s | $0.0012 | $0.00 | **Low** |
-| **Doc Search** | 5 | ~1.2s | $0.0008 | $0.00 | **Low** |
-| **Web Search** | 4 | ~4.5s | $0.0120 | $0.0320 | **High** |
+| **SQL Query** | 8 | ~0.8s | $0.0012 (~₹0.10) | $0.00 (₹0.00) | **Low** |
+| **Doc Search** | 5 | ~1.2s | $0.0008 (~₹0.07) | $0.00 (₹0.00) | **Low** |
+| **Web Search** | 4 | ~4.5s | $0.0120 (~₹1.01) | $0.0320 (~₹2.69) | **High** |
 
 ### **Key Metrics:**
 *   **Most Frequent Tool:** `query_data` (SQL). It is our primary ground-truth source and is used to resolve ambiguity and extract core financial metrics.
-*   **Most Expensive Tool:** `web_search` (Tavily). Each search costs ~$0.008, and the multi-turn reasoning required to process web snippets consumes the most LLM tokens.
+*   **Most Expensive Tool:** `web_search` (Tavily). Each search costs ~$0.008 (~₹0.67), and the multi-turn reasoning required to process web snippets consumes the most LLM tokens.
 
 ---
 
 ## 3. Cost-Benefit Analysis
 
 ### **The Case for Agentic RAG**
-The system currently operates at an average cost of **$0.01 per complex query**. 
+The system currently operates at an average cost of **$0.01 (~₹0.84) per complex query**. 
 *   **100% Grounding Retention**: The primary ROI justification for these costs is that the agent maintained a **100% grounding rate** during the degradation test. Even when 50% of the corpus was removed, the agent's "Refuse-to-Guess" policy (from Bonus A) and "Self-Critique" (from Bonus C) ensured that every claim remained cited.
-*   **Economic Efficiency**: By prioritizing the **SQL Database** (zero external cost), we resolve 40% of queries for under $0.001. We only incur the $0.016 "Web Tax" when local data is insufficient.
+*   **Economic Efficiency**: By prioritizing the **SQL Database** (zero external cost), we resolve 40% of queries for under **$0.001 (₹0.08)**. We only incur the **$0.016 (₹1.34)** "Web Tax" when local data is insufficient.
 
 ---
 
@@ -60,7 +60,7 @@ To ensure strict adherence to this budget without compromising the depth of reas
 
 ### **1. Persistent Response Caching**
 *   **Mechanism**: A file-based cache (`agent/response_cache.json`) stores final agent responses indexed by the user's question.
-*   **Impact**: Redundant queries during development, regression testing, and evaluation now cost **$0.00**. This is critical when iterating on complex multi-turn reasoning prompts where a single query might otherwise consume several thousand tokens.
+*   **Impact**: Redundant queries during development, regression testing, and evaluation now cost **$0.00 (₹0.00)**. This is critical when iterating on complex multi-turn reasoning prompts where a single query might otherwise consume several thousand tokens.
 
 ### **2. Aggressive Conciseness Policy**
 *   **Mechanism**: The system prompt now explicitly instructs the `gpt-4.1-mini` model to provide direct, grounded answers without conversational filler.
@@ -68,7 +68,7 @@ To ensure strict adherence to this budget without compromising the depth of reas
 
 ### **3. Tiered Data Escalation**
 *   **Rule**: The agent is programmed to exhaust the local SQL database (free) and local documentation (free) before escalating to external search (pay-per-call).
-*   **Grounding ROI**: This keeps the average cost per query at approximately **$0.005 - $0.015**, allowing for roughly **1,200 to 3,600 high-complexity queries** within the ₹1,500 budget.
+*   **Grounding ROI**: This keeps the average cost per query at approximately **$0.005 - $0.015 (₹0.42 - ₹1.26)**, allowing for roughly **1,200 to 3,600 high-complexity queries** within the ₹1,500 budget.
 
 ### **Final Assessment:**
 The system is currently projected to utilize less than **10% of the ₹1,500 budget** for the entire primary development and evaluation cycle, leaving ample room for extensive stress-testing and degradation audits.

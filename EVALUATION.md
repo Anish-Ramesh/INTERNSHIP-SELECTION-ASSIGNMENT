@@ -1329,11 +1329,11 @@ To improve decision-making, the agent implements a mandatory **Planning Turn** b
 
 The system tracks per-tool latency, token consumption, and estimated costs to ensure budget compliance and prioritize efficient retrieval paths.
 
-| Tool Name | Total Calls | Total Tokens | Avg. Latency (s) | Est. Cost (USD) |
-|:---|:---:|:---:|:---:|:---:|
-| **query_data** | 15 | 13,709 | 0.00s | $0.002056 |
-| **search_docs** | 11 | 9,021 | 0.00s | $0.001353 |
-| **web_search** | 11 | 8,877 | 1.46s | $0.001332 |
+| Tool Name | Total Calls | Total Tokens | Avg. Latency (s) | Est. Cost (USD) | Est. Cost (INR) |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **query_data** | 15 | 13,709 | 0.00s | $0.002056 | ₹0.17 |
+| **search_docs** | 11 | 9,021 | 0.00s | $0.001353 | ₹0.11 |
+| **web_search** | 11 | 8,877 | 1.46s | $0.001332 | ₹0.11 |
 
 - **Most Expensive Tool (Total)**: `query_data` (Due to higher volume of structural lookups)
 - **Most Called Tool**: `query_data`
