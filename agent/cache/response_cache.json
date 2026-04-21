@@ -390,38 +390,5 @@
                 "total_latency": 2.7655441761016846
             }
         }
-    },
-    "\"List the top 3 highest-grossing movies in the dataset and their respective release years.\"": {
-        "timestamp": "2026-04-22T03:27:44.231289",
-        "question": "\"List the top 3 highest-grossing movies in the dataset and their respective release years.\"",
-        "steps": [
-            {
-                "step_number": 1,
-                "tool_name": "query_data",
-                "input": "SELECT title, year, worldwide_gross FROM movies ORDER BY worldwide_gross DESC LIMIT 3;",
-                "output": "Error executing SQL query: Missing optional dependency 'tabulate'.  Use pip or conda to install tabulate.",
-                "rationale": null
-            },
-            {
-                "step_number": 2,
-                "tool_name": "query_data",
-                "input": "SELECT title, year, worldwide_gross FROM movies ORDER BY worldwide_gross DESC LIMIT 3;",
-                "output": "Error: Redundant call. Your existing knowledge already covers keywords ['year', '3', 'limit', 'from', 'select', 'title', 'order', 'desc', 'worldwide_gross']. Please use your KNOWLEDGE BASE SO FAR.",
-                "rationale": null
-            }
-        ],
-        "final_answer": "I'm sorry, but it appears that I currently do not have access to the movie dataset information needed to list the top 3 highest-grossing movies and their release years. If you have the data or can provide access, I would be glad to assist further.",
-        "citations": [
-            "query_data"
-        ],
-        "number_of_steps": 2,
-        "refused": false,
-        "telemetry": {
-            "query_data": {
-                "calls": 2,
-                "total_tokens": 1519,
-                "total_latency": 0.009768486022949219
-            }
-        }
     }
 }
