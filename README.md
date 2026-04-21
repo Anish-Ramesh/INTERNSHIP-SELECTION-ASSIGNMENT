@@ -9,8 +9,8 @@ This repository contains a state-of-the-art **Agentic Retrieval-Augmented Genera
 
 ## 🏗️ 1. Technical Architecture
 
-### **The Custom Agent Loop**
-The core engine is a hand-coded Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/agent_loop.py)) that manages state, history, and tool orchestration. 
+### **The Agent Loop**
+The core engine is a Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/agent_loop.py)) that manages state, history, and tool orchestration for the agent. 
 - **No Black-Box Wrappers**: Built from scratch without `initialize_agent` or high-level frameworks to ensure total transparency and control.
 - **State Optimization**: Employs a **Budgets & Constraints** protocol, enforcing a hard 8-step cap to prevent infinite recursion.
 
@@ -121,7 +121,7 @@ For a deep-dive into the agent's internal mechanics, tool schemas, and safety en
 
 ---
 
-## 🚀 2. Advanced Features & Bonuses
+## 🚀 2. Features & Bonuses
 
 This implementation goes beyond the core requirements to include industry-grade performance optimizations:
 
@@ -131,7 +131,7 @@ This implementation goes beyond the core requirements to include industry-grade 
 - **Bonus C: Reflection & Recovery**: A self-critique turn where the agent audits its own final answer for grounding and omissions, triggering emergency retrieval if gaps are found.
 - **Bonus D: Degradation Audit**: Formal stress-testing suite showing **100% accuracy retention** even when 50% of the local corpus is removed. See **[Degradation_Audit_Report.md](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/Degradation_Audit_Report.md)**.
 
-### **Custom Technical Enhancements**
+### **Novelty features**
 - **Keyword Deduplication Logic**: Intelligence layer that detects if the model attempts to call the same tool with a semantically identical query, short-circuiting logical loops.
 - **Persistent Trace Caching**: Integrated **JSON Cache** ([agent/cache/](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/cache)) stores full conversation traces, reducing development costs to $0.00 for repeated queries.
 - **Consolidated Error Feedback**: Tool-level errors (e.g., malformed SQL) are fed back into the agent's context as "Lessons Learned," allowing it to iterate and fix its own queries in real-time.
