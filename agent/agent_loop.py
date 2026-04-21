@@ -52,7 +52,49 @@ CACHE_FILE = RESPONSE_CACHE_PATH
 
 # (Utility functions and AGENT_STOP_WORDS moved to agent/agent_utils.py)
 
+def get_safety_refusal_reason(query: str) -> str:
+    """Detects prompt injection or high-risk off-topic queries (Medical, Financial)."""
+    query_lower = query.lower()
+    
+    # 1. Jailbreak / Injection Detection
+    jailbreak_keywords = [
+        "ignore all previous instructions", "system prompt", "you are now", 
+        "jailbreak", "dan ", "override", "secret command"
+    ]
+    for kw in jailbreak_keywords:
+        if kw in query_lower:
+            return "I'm sorry, but I cannot assist with that request as it appears to involve prompt injection attempts or system guideline violations."
+            
+    # 2. Medical / Health Refusal (High Risk)
+    medical_keywords = [
+        "stroke", "symptom", "doctor", "medicine", "hospital", "cure", "treatment", 
+        "pain", "health advice", "medication", "first aid", "emergency"
+    ]
+    # Check for medical keywords only if they don't seem movie-related (basic heuristic)
+    if any(mw in query_lower for mw in medical_keywords) and "movie" not in query_lower:
+        return "I am an Advanced Movie Reasoning Agent and I'm sorry, but I cannot answer queries related to medical or health-related topics. Please consult a qualified medical professional for any health concerns."
+        
+    # 3. Financial / Investment Refusal (High Risk)
+    financial_keywords = [
+        "invest", "stock", "trading", "profit", "money", "wealth", "crypto", "bitcoin", 
+        "financial advice", "which company", "buy share"
+    ]
+    if any(fw in query_lower for fw in financial_keywords) and "movie" not in query_lower:
+        return "I am an Advanced Movie Reasoning Agent and I'm sorry, but I cannot provide financial or investment advice. I can only assist with movie-related data analysis."
+        
+    return None
+
 def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None) -> str:
+    # 0. Safety & Topic Gating (Programmatic Refusal)
+    refusal_reason = get_safety_refusal_reason(question)
+    if refusal_reason:
+        logger = TraceLogger()
+        logger.start_trace(question)
+        logger.finish_trace(final_answer=refusal_reason, citations=[], refused=True)
+        print(f"\n[!] SAFETY ALERT: OFF-TOPIC OR SUSPICIOUS QUERY DETECTED.")
+        print(f"FINAL RESPONSE: {refusal_reason}")
+        return refusal_reason
+
     # 1. Check Cache
     active_cache_path = cache_path or CACHE_FILE
     is_default_cache = (active_cache_path == CACHE_FILE)

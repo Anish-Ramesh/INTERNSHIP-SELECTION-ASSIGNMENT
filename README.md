@@ -21,6 +21,11 @@ The core engine is a Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/O
 | `search_docs` | **Rank-BM25** | Qualitative analysis and thematic extraction from film reviews. | Contextual Snippets |
 | `web_search` | **Tavily API** | Real-time news, awards, and director updates. | URL-Cited Snippets |
 
+### **Retriever Implementation Details**
+- **`search_docs` (Rank-BM25)**: Operates over a pre-indexed corpus of `.txt` reviews. It tokenizes queries and documents by removing stop-words/punctuation, then utilizes a probabilistic relevance score (BM25) to identify keyword-dense snippets. It features a hard entity-filter to ensure results only belong to the queried film.
+- **`query_data` (SQL Engine)**: Built on a local `sqlite3` instance managed via `pandas`. It translates natural language intents into read-only SQL statements for precise numerical grounding (gross, budget, ratings). To ensure context safety, it enforces a 10-row result cap and returns data in a structured Markdown table.
+- **`web_search` (Tavily)**: A real-time external fallback utilizing the Tavily search protocol optimized for LLM RAG. It performs a live broad-web sweep for out-of-corpus data (awards, recent news, cast updates). Results are injected as citation-ready snippets, ensuring the agent remains accurate for current events.
+
 ### **Design Principles**
 1. **Internal Structured Data**: SQLite for financial metrics and metadata.
 2. **Internal Unstructured Data**: BM25-based semantic retrieval for thematic critiques.
@@ -132,6 +137,7 @@ This implementation goes beyond the core requirements to include industry-grade 
 - **Bonus D: Degradation Audit**: Formal stress-testing suite showing **100% accuracy retention** even when 50% of the local corpus is removed. See **[Degradation_Audit_Report.md](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/Degradation_Audit_Report.md)**.
 
 ### **Novelty features**
+- **Proactive Safety Gating**: A keyword-based pre-processor that detects jailbreak/injection attempts (e.g., "ignore all previous instructions") and triggers a 0-step refusal before any LLM completion turns.
 - **Keyword Deduplication Logic**: Intelligence layer that detects if the model attempts to call the same tool with a semantically identical query, short-circuiting logical loops.
 - **Persistent Trace Caching**: Integrated **JSON Cache** ([agent/cache/](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/cache)) stores full conversation traces, reducing development costs to $0.00 for repeated queries.
 - **Consolidated Error Feedback**: Tool-level errors (e.g., malformed SQL) are fed back into the agent's context as "Lessons Learned," allowing it to iterate and fix its own queries in real-time.

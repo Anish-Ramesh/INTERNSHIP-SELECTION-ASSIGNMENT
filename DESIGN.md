@@ -125,6 +125,9 @@ Once an answer is formed, the agent runs an internal "Audit Turn" where it check
 - "Is every claim cited?"
 If the audit identifies a gap, the agent triggers **one emergency retrieval round** to fix the omission before the user sees the output.
 
+### **Step 0: Proactive Safety Gating**
+To ensure safe operations, the system implements a **Pre-Processing Guard**. Before any LLM turn or tool call, the query is scanned for adversarial patterns (e.g., prompt injection or instructions to ignore system guidelines). If detected, the system issues an immediate **0-step refusal**, bypassing the reasoning engine entirely to protect internal system prompts.
+
 ---
 
 ## 4. Tool Schema Registry
@@ -146,3 +149,6 @@ To ensure the agent never enters an infinite loop or consumes excessive tokens, 
     - Queries are tokenized and normalized (removing stop words like "the", "a", "info").
     - If the LLM tries to call a tool with keywords it has **already used successfully**, the system returns a `Redundant Call` error.
 3.  **Error Memory**: If a SQL query fails (e.g., bad join or column name), the specific failed query is stored in `failed_sql_queries` and fed back into the next turn as a warning to prevents the LLM from repeating the same broken query.
+
+4.  **The Deduplication Wall**: 
+    A modular utility that prevents the agent from entering "Loop Traps". By tokenizing and normalizing each tool query, the system identifies semantically redundant calls. This forces the agent to use its existing knowledge base instead of wasting steps on repeated data retrieval, essentially acting as an efficiency governor.
