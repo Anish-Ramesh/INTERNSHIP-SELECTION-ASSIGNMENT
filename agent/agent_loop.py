@@ -163,7 +163,7 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
                 model=MODEL_NAME
             )
         except Exception as e:
-            refusal_msg = f"Execution interrupted: {str(e)}"
+            refusal_msg = f"Execution interrupted: {str(e)}\n[FATAL ERROR]: Please fix the environment or connection issues before retrying."
             logger.set_telemetry(telemetry.get_summary())
             logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
             logger.print_terminal_trace()
@@ -203,9 +203,10 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
             logger.finish_trace(final_answer=final_answer, citations=granular_citations)
             logger.print_terminal_trace()
             
-            # 2. Update Cache (Store full trace for replay)
-            cache[question] = logger.current_trace
-            save_cache(cache, cache_path=active_cache_path, enable_rollover=is_default_cache)
+            # 2. Update Cache (Store full trace for replay) - ONLY if not refused or errored
+            if not logger.current_trace.get("refused", False):
+                cache[question] = logger.current_trace
+                save_cache(cache, cache_path=active_cache_path, enable_rollover=is_default_cache)
             
             return final_answer
             
@@ -257,8 +258,23 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
                             context_state["web_calls_count"] += 1
                         
                         context_state["used_normalized_queries"].add((tool_name, query_keywords))
+                        
+                        # UNIVERSAL ERROR DETECTION: Halt on any critical tool error or returned error string
+                        # We allow "no results found" as a valid outcome, but "Error" prefix indicates failure.
+                        if str(result).startswith("Error"):
+                            fatal_msg = f"TOOL EXECUTION ERROR in {tool_name}: {result}\n[ACTION]: Please investigate the tool failure or fix the query/environment."
+                            logger.log_step(tool_input=input_str, tool_name=tool_name, tool_output=str(result), rationale="Tool returned an error.")
+                            logger.finish_trace(final_answer=fatal_msg, citations=[], refused=True)
+                            logger.print_terminal_trace()
+                            return fatal_msg
+
                     except Exception as e:
-                        result = f"Error computing tool {tool_name}: {str(e)}"
+                        # Catch any unexpected Python exceptions during tool execution
+                        error_msg = f"FATAL EXCEPTION in {tool_name}: {str(e)}\n[ACTION]: Fix the Python code or environment issue."
+                        logger.log_step(tool_input=input_str, tool_name=tool_name, tool_output=error_msg, rationale="Python exception occurred.")
+                        logger.finish_trace(final_answer=error_msg, citations=[], refused=True)
+                        logger.print_terminal_trace()
+                        return error_msg
                     
                 # --- Bonus B: Telemetry (Silent logging) ---
                 latency = time.time() - start_time

@@ -4,3 +4,4 @@ langchain-community
 rank_bm25
 pandas
 requests
+tabulate
