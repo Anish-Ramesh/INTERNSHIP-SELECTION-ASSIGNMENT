@@ -3,13 +3,14 @@
 [![Project Status](https://img.shields.io/badge/Status-Evaluation--Ready-brightgreen)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/EVALUATION.md)
 [![Data Track](https://img.shields.io/badge/Track-Option_C-blue)](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/dataset/unstructured_reviews)
 
-This repository contains a state-of-the-art **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie corpus. Unlike standard linear RAG pipelines, this system utilizes a custom **ReAct (Reasoning + Acting)** loop to dynamically orchestrate between structured SQL databases, unstructured BM25 indices, and real-time Web Search.
+This repository contains a **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie corpus. Unlike standard linear RAG pipelines, this system utilizes a custom **ReAct (Reasoning + Acting)** loop to dynamically orchestrate between structured SQL databases, unstructured BM25 indices, and real-time Web Search.
 
+## 🎥 1. Agent Demonstration (ReAct Reasoning Trace)
 ![Agent Demo](demo.gif)
 
 ---
 
-## 🏗️ 1. Technical Architecture
+## 🏗️ 2. Technical Architecture
 
 ### **The Agent Loop**
 The core engine is a Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/agent_loop.py)) that manages state, history, and tool orchestration for the agent. 
@@ -128,9 +129,9 @@ For a deep-dive into the agent's internal mechanics, tool schemas, and safety en
 
 ---
 
-## 🚀 2. Features & Bonuses
+## 🚀 3. Features & Bonuses
 
-This implementation goes beyond the core requirements to include industry-grade performance optimizations:
+This implementation goes beyond the core requirements to include advanced performance optimizations:
 
 ### **Implemented Bonuses**
 - **Bonus A: Strategic Reasoning Protocol**: Every turn includes a mandatory *Thinking* phase (Strategic Breakdown → Plan → Thought) before any tool invocation. This improved tool accuracy by **~12%**.
@@ -146,7 +147,7 @@ This implementation goes beyond the core requirements to include industry-grade 
 
 ---
 
-## 📊 3. Performance & Evaluation Summary
+## 📊 4. Performance & Evaluation Summary
 
 The system was evaluated against a rigorous 20-question suite covering Single-Tool, Multi-Tool, Refusal, and Edge-Case categories.
 
@@ -161,7 +162,7 @@ Full 20-question traces and forensic failure analysis can be found in **[EVALUAT
 
 ---
 
-## 💻 4. Developer Guide (Setup & Usage)
+## 💻 5. Developer Guide (Setup & Usage)
 
 ### **One-Step Installation**
 The project includes an automated setup pipeline that handles virtual environments and data preprocessing:
@@ -182,7 +183,7 @@ TAVILY_API_KEY=your_key_here
 
 ---
 
-## ⚠️ 5. Honest Assessment: Failure Modes
+## ⚠️ 6. Honest Assessment: Failure Modes
 
 As per the technical requirements, we have identified and documented the system's "Breaking Points":
 1. **Helpfulness Drift**: In refusal cases (like recipes), the agent sometimes provides general trends before stating it cannot fulfill the request due to the base model's helpfulness bias.
@@ -191,5 +192,6 @@ As per the technical requirements, we have identified and documented the system'
 
 ---
 
-## 📝 6. AI Development Disclosure
+## 📝 7. AI Development Disclosure
 This project was pair-programmed with **Antigravity**, an experimental AI coding agent. Together, we designed the modular tool architecture, implemented the ReAct loop from first principles, and developed the forensic audit runners to ensure reproducible excellence.
+

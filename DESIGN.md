@@ -152,3 +152,4 @@ To ensure the agent never enters an infinite loop or consumes excessive tokens, 
 
 4.  **The Deduplication Wall**: 
     A modular utility that prevents the agent from entering "Loop Traps". By tokenizing and normalizing each tool query, the system identifies semantically redundant calls. This forces the agent to use its existing knowledge base instead of wasting steps on repeated data retrieval, essentially acting as an efficiency governor.
+
