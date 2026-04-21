@@ -5,6 +5,8 @@
 
 This repository contains a state-of-the-art **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie corpus. Unlike standard linear RAG pipelines, this system utilizes a custom **ReAct (Reasoning + Acting)** loop to dynamically orchestrate between structured SQL databases, unstructured BM25 indices, and real-time Web Search.
 
+![Agent Demo](demo.gif)
+
 ---
 
 ## 🏗️ 1. Technical Architecture

@@ -15,12 +15,20 @@ AGENT_STOP_WORDS = {
 }
 
 def clean_final_answer(text: str) -> str:
-    """Strip internal reasoning blocks (STRATEGIC BREAKDOWN, THOUGHT, PLAN, etc.) from the final response."""
-    # Remove STRATEGIC BREAKDOWN:, THOUGHT:, PLAN:
+    """Strip internal reasoning blocks ([STRATEGIC BREAKDOWN], [THOUGHT], [PLAN], etc.) from the final response."""
+    # Remove bracketed reasoning blocks
+    text = re.sub(r"(?i)\[STRATEGIC BREAKDOWN\].*?(?=\[THOUGHT\]|\[PLAN\]|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)\[THOUGHT\].*?(?=\[PLAN\]|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
+    text = re.sub(r"(?i)\[PLAN\].*?(?=\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
+    
+    # Also handle non-bracketed versions just in case
     text = re.sub(r"(?i)STRATEGIC BREAKDOWN:.*?(?=THOUGHT:|PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
     text = re.sub(r"(?i)THOUGHT:.*?(?=PLAN:|\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
     text = re.sub(r"(?i)PLAN:.*?(?=\[AGENT RESPONSE\]|$)", "", text, flags=re.DOTALL)
-    return text.strip()
+    
+    # Finally, remove the [AGENT RESPONSE] tag itself if it exists
+    text = re.sub(r"(?i)\[AGENT RESPONSE\]", "", text).strip()
+    return text
 
 def normalize_output(result: any, max_len: int = 2000) -> str:
     """Clean and truncate tool outputs for the context layer."""
