@@ -26,6 +26,7 @@ def main():
     choice = input("\nEnter your choice (1/2/3) [1]: ").strip()
     if choice == '' or choice == '1':
         print("\n--- Running Option 1: Official Evaluation Track ---")
+        num_files_to_generate = 15
         primary_path = 'dataset/top1000movies.csv'
         secondary_path = 'dataset/rotten_tomatoes_movies.csv'
         
@@ -67,6 +68,10 @@ def main():
 
     elif choice == '2':
         print("\n--- Custom Separate Datasets ---")
+        print("\n------------------------------")
+        num_files_str = input("How many text files should be generated for the unstructured data? [15]: ").strip()
+        num_files_to_generate = 15 if not num_files_str else int(num_files_str)
+        
         print("Note: The PRIMARY dataset MUST contain these columns: 'movie title', 'gross', 'week open', 'budget', 'rotten_rating'")
         primary_path = input("Enter path to PRIMARY dataset CSV: ").strip()
         print("\nNote: The SECONDARY dataset MUST contain these columns: 'movie title', 'movie_review'")
@@ -106,6 +111,10 @@ def main():
 
     elif choice == '3':
         print("\n--- Single Preprocessed Dataset ---")
+        print("\n------------------------------")
+        num_files_str = input("How many text files should be generated for the unstructured data? [15]: ").strip()
+        num_files_to_generate = 15 if not num_files_str else int(num_files_str)
+        
         print("Note: The SINGLE dataset MUST contain all these mandatory columns:")
         print("'movie title', 'gross', 'week open', 'budget', 'rotten_rating', 'movie_review'")
         single_path = input("Enter path to the single dataset CSV: ").strip()
@@ -150,10 +159,6 @@ def main():
     # Create a sort key column: 0 if movie already has a txt file, 1 otherwise
     merged['_sort_key'] = merged['computed_title'].apply(lambda t: 0 if get_safe_title(t).lower() in existing_txts else 1)
     merged = merged.sort_values(by='_sort_key').drop(columns=['_sort_key'])
-
-    print("\n------------------------------")
-    num_files_str = input("How many text files should be generated for the unstructured data? [15]: ").strip()
-    num_files_to_generate = 15 if not num_files_str else int(num_files_str)
 
     print("\nProcessing...")
     

@@ -6,14 +6,13 @@ def setup():
     """
     One-command setup for the Movie Reasoning Agent.
     1. Installs dependencies from requirements.txt
-    2. Runs the data preprocessing pipeline.
     """
     print("\n" + "="*60)
     print(" MOVIE REASONING AGENT: ONE-COMMAND SETUP ".center(60, "="))
     print("="*60)
 
     # 1. Create Virtual Environment
-    print(f"\n[1/3] Creating virtual environment (venv)...")
+    print(f"\n[1/2] Creating virtual environment (venv)...")
     try:
         if not os.path.exists("venv"):
             subprocess.check_call([sys.executable, "-m", "venv", "venv"])
@@ -31,35 +30,23 @@ def setup():
         venv_python = os.path.join("venv", "bin", "python")
 
     # 2. Install Dependencies
-    print(f"\n[2/3] Installing dependencies into venv...")
+    print(f"\n[2/2] Installing dependencies into venv...")
     try:
         subprocess.check_call([venv_python, "-m", "pip", "install", "-r", "requirements.txt"])
         print(">>> SUCCESS: Dependencies installed.")
     except Exception as e:
         print(f"!!! Error installing dependencies: {e}")
-        print(">>> Proceeding to preprocessing...")
-
-    # 3. Run Preprocessing
-    print(f"\n[3/3] Running data preprocessing pipeline...")
-    if not os.path.exists("preprocess.py"):
-        print("!!! Error: preprocess.py not found in root.")
-        return
-
-    try:
-        subprocess.check_call([venv_python, "preprocess.py"])
-        print(">>> SUCCESS: Data indices and SQLite database initialized.")
-    except Exception as e:
-        print(f"!!! Error during preprocessing: {e}")
-        return
-
+        print(">>> Proceeding...")
+    
     print("\n" + "="*60)
     print(" SETUP COMPLETE ".center(60, "="))
     print("="*60)
-    print("\nYou can now run the agent (ensure venv is activated):")
+    print("\n\nYou can now run the agent (ensure venv is activated):")
     print("  Windows: .\\venv\\Scripts\\activate")
     print("  MacOS/Linux: source venv/bin/activate")
     print("  python agent/agent_loop.py")
-    print("\nOr run the evaluation suite:")
+    print("\nPlease create a '.env' file and add necessary API keys, you can still run the evaluation set using the cached data.")
+    print("\nOr run the evaluation suite: [with cache enabled for results]")
     print("  python task_D_20eval_test.py")
 
 if __name__ == "__main__":
