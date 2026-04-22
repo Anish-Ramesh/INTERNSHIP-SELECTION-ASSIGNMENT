@@ -8,6 +8,20 @@ This repository contains a **Agentic Retrieval-Augmented Generation (RAG)** syst
 ## 🎥 1. Agent Demonstration (ReAct Reasoning Trace)
 ![Agent Demo](demo.gif)
 
+**Demonstration Workflow:**
+1.  **Input**: The user provides a natural language query.
+2.  **Reasoning**: The agent performs an internal **ReAct** cycle ([STRATEGIC BREAKDOWN] → [PLAN] → [THOUGHT]) to determine the best tool for the task.
+3.  **Execution**: The agent dynamically calls **SQL**, **BM25 Search**, or **Web Search** based on its plan.
+4.  **Synthesis**: Data from multiple sources is synthesized into a single, grounded response.
+
+**The demo showcases the following agentic behaviors:**
+
+| Internal Commands / Tools | Query Inputted |
+|:---|:---|
+| `query_data` (SQL) | "List the top 3 highest-grossing movies in the dataset and their respective release years." |
+| `query_data` + `search_docs` | "What was the budget for 'Avengers: Endgame', and based on the reviews, what was the most praised aspect of its plot or themes?" |
+| **System Refusal** (Safety Gate) | "Can you provide a detailed financial investment plan for the tech sector in 2026?" |
+
 ---
 
 ## 🏗️ 2. Technical Architecture
