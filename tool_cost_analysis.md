@@ -47,11 +47,6 @@ The system currently operates at an average cost of **$0.01 (~₹0.84) per compl
 
 ---
 
-## 5. Final Conclusion
-The Agentic RAG system demonstrates extreme fiscal efficiency, maintaining production-grade accuracy while utilizing less than 10% of the allocated ₹1,500 budget. By prioritizing local structural data (SQL) and unstructured reviews (BM25) before escalating to live web search, we have balanced cost-per-query with high-depth reasoning capabilities.
-
----
-
 ## 6. Budget Compliance & Caching Strategy
 
 **Assignment Constraint:** Total API spend must remain under **₹1,500 (~$18.00 USD)**.
