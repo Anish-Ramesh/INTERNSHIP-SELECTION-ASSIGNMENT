@@ -47,7 +47,7 @@ The system currently operates at an average cost of **$0.01 (~₹0.84) per compl
 
 ---
 
-## 6. Budget Compliance & Caching Strategy
+## 5. Budget Compliance & Caching Strategy
 
 **Assignment Constraint:** Total API spend must remain under **₹1,500 (~$18.00 USD)**.
 
@@ -67,9 +67,9 @@ To ensure strict adherence to this budget without compromising the depth of reas
 
 ---
 
-## 7. Comprehensive Evaluation Forecast (80 Questions)
+## 6. Comprehensive Evaluation Forecast
 
-Based on the **~325 tokens** system prompt, the following projection estimates the total cost and token usage on average.
+Based on the **~325 tokens** system prompt, the following projection estimates the total cost and token usage on average. The free tier limits are **800,000 tokens for the output**. The total number of interactions with the agent with one API key from github models on free-tier is 80 questions approximately on observation.
 
 ### **Token Accumulation Model (Per Question)**
 | Turn # | Context Input (Prompt + History + Results) | Reasoning Output |
@@ -88,4 +88,4 @@ Based on the **~325 tokens** system prompt, the following projection estimates t
 *   **Estimated Cost (INR)**: **~₹13.40**
 
 ### **Conclusion:**
-The use of **GPT-4.1-mini** allows for industrial-scale evaluation of the agent loop at **~₹0.17 per question**, ensuring that the project remains highly scalable while staying well within the ₹1,500 budget constraint.
+The use of **GPT-4.1-mini** allows for evaluation of the agent loop at **~₹0.17 per question**, ensuring that the project remains highly scalable while staying well within the ₹1,500 budget constraint.
