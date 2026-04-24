@@ -69,7 +69,16 @@ INTERNSHIP-SELECTION-ASSIGNMENT/
 
 ---
 
-## 🏗️ 3. Technical Architecture
+## 📚 3. Documentation Index
+For a deep-dive into specific project domains, please refer to the following reports:
+- **[Architecture Design (DESIGN.md)](DESIGN.md)**: Details on the ReAct loop, tool schemas, and safety engineering.
+- **[Evaluation Report (EVALUATION.md)](EVALUATION.md)**: Forensic trace analysis of the 20-question suite and accuracy metrics.
+- **[Cost & Telemetry Analysis (tool_cost_analysis.md)](tool_cost_analysis.md)**: Detailed breakdown of token consumption, API spend, and fiscal projections.
+- **[Degradation Audit (Degradation_Audit_Report.md)](Degradation_Audit_Report.md)**: Stress-test results showing system resilience under 50% data loss.
+
+---
+
+## 🏗️ 4. Technical Architecture
 
 ### **The Agent Loop**
 The core engine is a Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/agent_loop.py)) that manages state, history, and tool orchestration for the agent. 
@@ -188,7 +197,7 @@ For a deep-dive into the agent's internal mechanics, tool schemas, and safety en
 
 ---
 
-## 🚀 4. Features & Bonuses
+## 🚀 5. Features & Bonuses
 
 This implementation goes beyond the core requirements to include advanced performance optimizations:
 
@@ -206,7 +215,7 @@ This implementation goes beyond the core requirements to include advanced perfor
 
 ---
 
-## 📊 5. Performance & Evaluation Summary
+## 📊 6. Performance & Evaluation Summary
 
 The system was evaluated against a rigorous 20-question suite covering Single-Tool, Multi-Tool, Refusal, and Edge-Case categories.
 
@@ -221,7 +230,7 @@ Full 20-question traces and forensic failure analysis can be found in **[EVALUAT
 
 ---
 
-## 💻 6. Developer Guide (Setup & Usage)
+## 💻 7. Developer Guide (Setup & Usage)
 
 ### **One-Step Installation**
 The project includes an automated setup pipeline that handles virtual environments and data preprocessing:
@@ -242,7 +251,7 @@ TAVILY_API_KEY=your_key_here
 
 ---
 
-## ⚠️ 7. Honest Assessment: Failure Modes
+## ⚠️ 8. Honest Assessment: Failure Modes
 
 As per the technical requirements, we have identified and documented the system's "Breaking Points":
 1. **Helpfulness Drift**: In refusal cases (like recipes), the agent sometimes provides general trends before stating it cannot fulfill the request due to the base model's helpfulness bias.
@@ -251,6 +260,6 @@ As per the technical requirements, we have identified and documented the system'
 
 ---
 
-## 📝 8. AI Development Disclosure
+## 📝 9. AI Development Disclosure
 This project was pair-programmed with **Antigravity**, an experimental AI coding agent. Together, we designed the modular tool architecture, implemented the ReAct loop from first principles, and developed the forensic audit runners to ensure reproducible excellence.
 

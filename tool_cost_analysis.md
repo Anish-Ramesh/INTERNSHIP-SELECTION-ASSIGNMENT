@@ -70,6 +70,27 @@ To ensure strict adherence to this budget without compromising the depth of reas
 *   **Rule**: The agent is programmed to exhaust the local SQL database (free) and local documentation (free) before escalating to external search (pay-per-call).
 *   **Grounding ROI**: This keeps the average cost per query at approximately **$0.005 - $0.015 (₹0.42 - ₹1.26)**, allowing for roughly **1,200 to 3,600 high-complexity queries** within the ₹1,500 budget.
 
-### **Final Assessment:**
-The system is currently projected to utilize less than **10% of the ₹1,500 budget** for the entire primary development and evaluation cycle, leaving ample room for extensive stress-testing and degradation audits.
+---
 
+## 7. Comprehensive Evaluation Forecast (80 Questions)
+
+Based on the **~325 tokens** system prompt, the following projection estimates the total cost and token usage on average.
+
+### **Token Accumulation Model (Per Question)**
+| Turn # | Context Input (Prompt + History + Results) | Reasoning Output |
+| :--- | :--- | :--- |
+| **Turn 1** | ~375 tokens | ~200 tokens |
+| **Turn 2** | ~1,075 tokens | ~200 tokens |
+| **Turn 3** | ~1,775 tokens | ~200 tokens |
+| **Turn 4** | ~2,475 tokens | ~200 tokens |
+| **Turn 5** | ~3,175 tokens | ~300 tokens |
+| **Total/Q** | **~8,875 Input Tokens** | **~1,100 Output Tokens** |
+
+### **Projected Suite Cost (80 Questions)**
+*   **Total Input Tokens**: 710,000 (0.71M)
+*   **Total Output Tokens**: 88,000 (0.088M)
+*   **Estimated Cost (USD)**: **~$0.16** ($0.106 input + $0.053 output)
+*   **Estimated Cost (INR)**: **~₹13.40**
+
+### **Conclusion:**
+The use of **GPT-4.1-mini** allows for industrial-scale evaluation of the agent loop at **~₹0.17 per question**, ensuring that the project remains highly scalable while staying well within the ₹1,500 budget constraint.
