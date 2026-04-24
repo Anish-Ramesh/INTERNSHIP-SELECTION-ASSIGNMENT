@@ -115,7 +115,7 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
     telemetry = TelemetryTracker()
     logger.start_trace(question)
     
-    # Advanced Context Layer
+    # Context Layer
     context_state = {
         "structured": [],
         "unstructured": [],
