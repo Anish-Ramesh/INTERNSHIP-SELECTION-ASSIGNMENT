@@ -151,9 +151,29 @@ class DocSearchTool:
                 continue
                 
             doc = filtered_docs[idx]
-            # TRUNCATION OPTIMIZATION: Ensure we don't blow out the 8k limits
+            
+            # TRUNCATION OPTIMIZATION: Intelligent Window
+            # Instead of just taking the first 1200 chars, find the first keyword match and center the window
             if len(doc) > 1200:
-                doc = doc[:1200] + "\n...[truncated for length]"
+                first_match_idx = -1
+                for word in tokenized_query:
+                    match = re.search(re.escape(word), doc, re.IGNORECASE)
+                    if match:
+                        first_match_idx = match.start()
+                        break
+                
+                if first_match_idx != -1:
+                    # Center the 1200 char window on the match, but don't go out of bounds
+                    start = max(0, first_match_idx - 400)
+                    end = min(len(doc), start + 1200)
+                    # Adjust start if end hit the document limit
+                    if end == len(doc):
+                        start = max(0, end - 1200)
+                    
+                    doc = ("[...]\n" if start > 0 else "") + doc[start:end] + ("\n[...]" if end < len(doc) else "")
+                else:
+                    # Fallback to start if no keyword found (unlikely given BM25 match)
+                    doc = doc[:1200] + "\n...[truncated for length]"
             
             meta = filtered_meta[idx]
             results.append(f"[Source: {meta['source']}, Page: {meta['page']}]\n{doc}")

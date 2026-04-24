@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import re
 import pandas as pd
 
 class QueryDataTool:
@@ -22,6 +23,11 @@ class QueryDataTool:
         - worldwide_gross (REAL)
         - rotten_tomatoes_score (REAL)
         
+        TRUNCATION RULES:
+        - By default, only the first 10 rows are displayed to conserve context.
+        - If you explicitly need more results to fulfill a user's request (e.g., 'List 30 movies'), you MUST include a 'LIMIT X' clause in your SQL.
+        - The absolute maximum display limit is 50 rows.
+        
         DO NOT use this tool to search for textual reviews, narratives, or real-time web facts.
         Always return the primary key or row identifiers to cite the data row in the db.
         
@@ -39,6 +45,12 @@ class QueryDataTool:
             if any(forbidden in sql_query.upper() for forbidden in ["INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "CREATE"]):
                 return "Error: Only SELECT queries are permitted."
 
+            # Determine requested limit from the query string
+            requested_limit = 10
+            limit_match = re.search(r'LIMIT\s+(\d+)', sql_query, re.IGNORECASE)
+            if limit_match:
+                requested_limit = min(int(limit_match.group(1)), 50)
+
             conn = sqlite3.connect(self.db_path)
             
             # Use pandas to nicely format the tabular output for the LLM
@@ -48,18 +60,19 @@ class QueryDataTool:
             if df.empty:
                 return "Query executed successfully but returned no results."
                 
-            # TRUNCATION OPTIMIZATION: Max 10 rows returned to prevent LLM context 8k limit overflow 
+            # TRUNCATION OPTIMIZATION
             total_rows = len(df)
-            if total_rows > 10:
-                df = df.head(10)
-                
-            results_markdown = df.to_markdown(index=False)
-            row_count_msg = f"\n\n*Result: {total_rows} rows found.*"
             
-            if total_rows > 10:
-                 return results_markdown + row_count_msg + "\n...(Output truncated to first 10 rows for brevity limit)."
+            # Use the requested limit or default to 10 if not specified
+            display_limit = requested_limit if limit_match else 10
+            
+            if total_rows > display_limit:
+                hidden_rows = total_rows - display_limit
+                df = df.head(display_limit)
+                results_markdown = df.to_markdown(index=False)
+                return f"{results_markdown}\n\n*Result: {total_rows} rows found ({display_limit} shown, {hidden_rows} hidden for brevity).* \n[ADVICE]: If you need more than {display_limit} rows, use 'OFFSET' to paginate or refine your query."
                  
-            return results_markdown + row_count_msg
+            return df.to_markdown(index=False) + f"\n\n*Result: {total_rows} rows found (End of dataset reached).* "
             
         except Exception as e:
             return f"Error executing SQL query: {str(e)}"

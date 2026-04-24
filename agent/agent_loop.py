@@ -120,7 +120,7 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         "structured": [],
         "unstructured": [],
         "web": [],
-        "used_normalized_queries": set(), # Format: (tool_name, frozenset_keywords)
+        "query_attempts": {}, # Format: (tool_name, frozenset_keywords) -> count
         "failed_sql_queries": set(),
         "web_calls_count": 0
     }
@@ -181,7 +181,8 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
                 "\n".join(list(set(context_state["unstructured"]))) + "\n" +
                 "\n".join(list(set(context_state["web"])))
             )
-            reflection = reflect_on_answer(client, MODEL_NAME, question, final_answer, curated_knowledge[:2000])
+            # Increased context window to 5000 to handle large SQL tables without triggering false 'hallucination' flags in reflection
+            reflection = reflect_on_answer(client, MODEL_NAME, question, final_answer, curated_knowledge[:5000])
             
             if "[FAIL]" in reflection and not context_state.get("has_reflected", False):
                 # If reflection fails, we add one emergency turn (Bonus C)
@@ -226,51 +227,57 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
                 
                 input_str = args.get("sql_query") if tool_name == "query_data" else args.get("query", "")
                 
-                # KEYWORD DEDUPLICATION (Advanced logic)
+                # KEYWORD DEDUPLICATION LOGIC (Three-Strike Policy)
                 raw_keywords = tokenize(input_str)
                 query_keywords = frozenset([w for w in raw_keywords if w not in AGENT_STOP_WORDS])
                 
-                # Check for exact keyword set match OR if the new query is a subset of a broader previous successful query
+                attempts = context_state["query_attempts"].get((tool_name, query_keywords), 0)
+                
                 is_redundant = False
-                for prev_tool, prev_keywords in context_state["used_normalized_queries"]:
-                    if tool_name == prev_tool:
-                        # If the keywords are the same, or the new query is just a subset of keywords we already searched
-                        if query_keywords == prev_keywords or (query_keywords and query_keywords.issubset(prev_keywords)):
-                            is_redundant = True
-                            break
+                apply_penalty_warning = False
+                
+                if attempts == 1:
+                    # Strike 2: Block and warn about redundancy
+                    is_redundant = True
+                    # Increment attempt so the 3rd time it passes
+                    context_state["query_attempts"][(tool_name, query_keywords)] = 2
+                elif attempts >= 2:
+                    # Strike 3+: Allow but with a clear step penalty warning
+                    is_redundant = False
+                    apply_penalty_warning = True
                 
                 if is_redundant and len(query_keywords) > 0:
-                    result = f"Error: Redundant call. Your existing knowledge already covers keywords {list(query_keywords)}. Please use your KNOWLEDGE BASE SO FAR."
+                    result = f"Error: Redundant call. Your existing knowledge already covers keywords {list(query_keywords)}. This is your 2nd attempt. One more repeat will incur a step penalty."
                 else:
                     try:
                         raw_result = TOOL_MAP[tool_name](input_str)
                         result = normalize_output(raw_result)
                         
-                        if tool_name == "query_data":
-                            if "Error" in str(raw_result):
-                                context_state["failed_sql_queries"].add(input_str)
-                            else:
-                                context_state["structured"].append(result)
-                        elif tool_name == "search_docs":
-                            context_state["unstructured"].append(result)
-                        else:
-                            context_state["web"].append(result)
-                            context_state["web_calls_count"] += 1
-                        
-                        context_state["used_normalized_queries"].add((tool_name, query_keywords))
-                        
-                        # UNIVERSAL ERROR DETECTION: Halt on any critical tool error or returned error string
-                        # We allow "no results found" as a valid outcome, but "Error" prefix indicates failure.
+                        # Check for Tool-Level Errors (e.g. SQL Syntax)
                         if str(result).startswith("Error"):
-                            fatal_msg = f"TOOL EXECUTION ERROR in {tool_name}: {result}\n[ACTION]: Please investigate the tool failure or fix the query/environment."
-                            logger.log_step(tool_input=input_str, tool_name=tool_name, tool_output=str(result), rationale="Tool returned an error.")
-                            logger.finish_trace(final_answer=fatal_msg, citations=[], refused=True)
-                            logger.print_terminal_trace()
-                            return fatal_msg
+                            # If it's a tool error, we do NOT increment the deduplication count 
+                            # because the agent didn't successfully get any data.
+                            # We also feed the error back to the LLM to let it try to fix it.
+                            pass 
+                        else:
+                            # Successful Tool Call (or "No results found" which is valid)
+                            # Increment the successful attempt count for deduplication
+                            context_state["query_attempts"][(tool_name, query_keywords)] = attempts + 1
+                            
+                            if tool_name == "query_data":
+                                context_state["structured"].append(result)
+                            elif tool_name == "search_docs":
+                                context_state["unstructured"].append(result)
+                            else:
+                                context_state["web"].append(result)
+                                context_state["web_calls_count"] += 1
 
+                            if apply_penalty_warning:
+                                result = f"[STEP PENALTY WARNING]: This is your 3rd attempt for these keywords. You have bypassed the deduplication wall, but note that this turn has consumed a reasoning step. Please use the results below effectively to avoid further redundancy.\n\n{result}"
+                        
                     except Exception as e:
-                        # Catch any unexpected Python exceptions during tool execution
-                        error_msg = f"FATAL EXCEPTION in {tool_name}: {str(e)}\n[ACTION]: Fix the Python code or environment issue."
+                        # SYSTEM EXCEPTION: This is a fatal code/environment error
+                        error_msg = f"FATAL SYSTEM EXCEPTION in {tool_name}: {str(e)}\n[ACTION]: The system environment is broken. Please fix the Python code or API configuration."
                         logger.log_step(tool_input=input_str, tool_name=tool_name, tool_output=error_msg, rationale="Python exception occurred.")
                         logger.finish_trace(final_answer=error_msg, citations=[], refused=True)
                         logger.print_terminal_trace()
