@@ -5,7 +5,7 @@
 
 This repository contains a **Agentic Retrieval-Augmented Generation (RAG)** system designed for deep reasoning over a hybrid movie corpus. Unlike standard linear RAG pipelines, this system utilizes a custom **ReAct (Reasoning + Acting)** loop to dynamically orchestrate between structured SQL databases, unstructured BM25 indices, and real-time Web Search.
 
-## 🎥 1. Task E: Demo Video (ReAct Reasoning Trace)
+## 🎥 1. Task E: Demo Video (ReAct Reasoning Trace) 
 ![Agent Demo](demo.gif)
 > [!TIP]
 > View the full high-resolution demonstration on YouTube: [**Watch Demo Video**](https://youtu.be/5TefrSAPv50)
