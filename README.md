@@ -7,6 +7,8 @@ This repository contains a **Agentic Retrieval-Augmented Generation (RAG)** syst
 
 ## 🎥 1. Task E: Demo Video (ReAct Reasoning Trace)
 ![Agent Demo](demo.gif)
+> [!TIP]
+> View the full high-resolution demonstration on YouTube: [**Watch Demo Video**](https://youtu.be/5TefrSAPv50)
 
 **Demonstration Workflow:**
 1.  **Input**: The user provides a natural language query.
