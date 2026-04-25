@@ -71,7 +71,18 @@ INTERNSHIP-SELECTION-ASSIGNMENT/
 
 ---
 
-## 📚 3. Documentation Index
+## 📊 3. Hybrid Knowledge Base
+The agent operates over a multi-tiered data environment to ensure high-fidelity grounding across structured, unstructured, and real-time domains.
+
+| Source | Content | Size |
+| :--- | :--- | :--- |
+| **SQLite DB** | Structured movie metadata (Year, Genre, Budget, Gross, RT Score) | 663 rows × 7 columns |
+| **BM25 Index** | Unstructured qualitative film reviews and thematic critiques | 15 .txt files |
+| **Web Search** | Real-time external data (News, Awards, recent credits) | Dynamic (Tavily API) |
+
+---
+
+## 📚 4. Documentation Index
 For a deep-dive into specific project domains, please refer to the following reports:
 - **[Architecture Design (DESIGN.md)](DESIGN.md)**: Details on the ReAct loop, tool schemas, and safety engineering.
 - **[Evaluation Report (EVALUATION.md)](EVALUATION.md)**: Forensic trace analysis of the 20-question suite and accuracy metrics.
@@ -199,21 +210,30 @@ For a deep-dive into the agent's internal mechanics, tool schemas, and safety en
 
 ---
 
-## 🚀 5. Features & Bonuses
+## 🚀 6. Project Roadmap & Milestones
 
-This implementation goes beyond the core requirements to include advanced performance optimizations:
+This implementation satisfies all core tasks (A-D) and includes several advanced performance bonuses.
 
-### **Implemented Bonuses**
-- **Bonus A: Strategic Reasoning Protocol**: Every turn includes a mandatory *Thinking* phase (Strategic Breakdown → Plan → Thought) before any tool invocation. This improved tool accuracy by **~12%**.
-- **Bonus B: Per-Tool Telemetry**: Real-time tracking of latency, token consumption, and API cost credits per turn. See **[tool_cost_analysis.md](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/tool_cost_analysis.md)**.
-- **Bonus C: Reflection & Recovery**: A self-critique turn where the agent audits its own final answer for grounding and omissions, triggering emergency retrieval if gaps are found.
-- **Bonus D: Degradation Audit**: Formal stress-testing suite showing **100% accuracy retention** even when 50% of the local corpus is removed. See **[Degradation_Audit_Report.md](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/Degradation_Audit_Report.md)**.
+### **Core Implementation (Tasks A-D)**
+| Milestone | Implementation Files | Key Accomplishment |
+| :--- | :--- | :--- |
+| **Task A: Tool Layer** | [`tools/`](tools/), [`task_A_test.py`](task_A_test.py) | Implemented precise SQL, BM25, and Web Search tools. |
+| **Task B: Agent Logic** | [`agent/agent_loop.py`](agent/agent_loop.py), [`task_B_test.py`](task_B_test.py) | Developed a custom ReAct loop with strategic reasoning. |
+| **Task C: Multi-Tool** | [`task_C_test.py`](task_C_test.py) | Verified cross-domain reasoning and tool orchestration. |
+| **Task D: Evaluation** | [`task_D_20eval_test.py`](task_D_20eval_test.py), [**EVALUATION.md**](EVALUATION.md) | Executed a 20-question suite with 100% grounding rate. |
 
-### **Novelty features**
-- **Proactive Safety Gating**: A keyword-based pre-processor that detects jailbreak/injection attempts (e.g., "ignore all previous instructions") and triggers a 0-step refusal before any LLM completion turns.
-- **Keyword Deduplication Logic**: Intelligence layer that detects if the model attempts to call the same tool with a semantically identical query, short-circuiting logical loops.
-- **Persistent Trace Caching**: Integrated **JSON Cache** ([agent/cache/](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/cache)) stores full conversation traces, reducing development costs to $0.00 for repeated queries.
-- **Consolidated Error Feedback**: Tool-level errors (e.g., malformed SQL) are fed back into the agent's context as "Lessons Learned," allowing it to iterate and fix its own queries in real-time.
+### **Advanced Bonuses (A-D)**
+| Bonus | Files & Logic | Purpose |
+| :--- | :--- | :--- |
+| **A: Strategic Reasoning** | [`agent/prompts.py`](agent/prompts.py) | Mandatory `[STRATEGIC BREAKDOWN]` before any action. |
+| **B: Operational Telemetry** | [`agent/bonus_features.py`](agent/bonus_features.py), [**tool_cost_analysis.md**](tool_cost_analysis.md) | Real-time tracking of latency and cost in USD & INR. |
+| **C: Reflection & Recovery** | [`agent/bonus_features.py`](agent/bonus_features.py) | Self-critique turn that audits and fixes final answers. |
+| **D: Degradation Audit** | [`degradation_runner.py`](degradation_runner.py), [**Degradation_Audit_Report.md**](Degradation_Audit_Report.md) | Verified 100% accuracy retention under 50% data loss. |
+
+### **Novelty Features**
+- **Proactive Safety Gating**: Programmatic pre-processor for injection/jailbreak detection.
+- **Keyword Deduplication**: Intelligence layer to prevent redundant, costly tool calls.
+- **Persistent Trace Caching**: Integrated JSON cache for $0.00 cost replay of common queries.
 
 ---
 
@@ -246,6 +266,12 @@ python setup_project.py
 - **Run Evaluation**: `python task_D_20eval_test.py`
 
 ### **Global Configuration (.env)**
+1.  **GITHUB_TOKEN**: Generate a token to access GitHub Models.
+    *   Visit the **[GPT-4o-mini Playground](https://github.com/marketplace/models/azure-openai/gpt-4-1-mini/playground)**.
+    *   Click **"Get started"** or **"Get SDK token"** to be redirected to the **[Personal Access Tokens](https://github.com/settings/personal-access-tokens)** page.
+    *   Create a new token and paste it into your `.env` file.
+2.  **TAVILY_API_KEY**: Get a free key from **[Tavily AI](https://tavily.com/)** for web search capabilities.
+
 ```bash
 GITHUB_TOKEN=your_token_here
 TAVILY_API_KEY=your_key_here
