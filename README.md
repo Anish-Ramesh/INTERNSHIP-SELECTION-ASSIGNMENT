@@ -91,7 +91,7 @@ For a deep-dive into specific project domains, please refer to the following rep
 
 ---
 
-## 🏗️ 4. Technical Architecture
+## 🏗️ 5. Technical Architecture
 
 ### **The Agent Loop**
 The core engine is a Python loop ([agent/agent_loop.py](file:///c:/Users/Anish/OneDrive/Documents/Prodapt/INTERNSHIP-SELECTION-ASSIGNMENT/agent/agent_loop.py)) that manages state, history, and tool orchestration for the agent. 
@@ -237,7 +237,7 @@ This implementation satisfies all core tasks (A-D) and includes several advanced
 
 ---
 
-## 📊 6. Performance & Evaluation Summary
+## 📊 7. Performance & Evaluation Summary
 
 The system was evaluated against a rigorous 20-question suite covering Single-Tool, Multi-Tool, Refusal, and Edge-Case categories.
 
@@ -288,7 +288,7 @@ As per the technical requirements, we have identified and documented the system'
 
 ---
 
-## 🛡️ 10. Operational Constraints & Resilience
+## 🛡️ 9. Operational Constraints & Resilience
 
 ### **Hard Step Cap (8 Tool Calls)**
 The system enforces a strict **8-tool-call limit** to ensure operational stability and prevent infinite reasoning loops. This "hard cap" is a core architectural safeguard; if the agent cannot resolve a query within this budget, it is programmed to deliver a **Structured Refusal** rather than providing an ungrounded guess.
@@ -304,6 +304,6 @@ python agent/agent_loop.py "List the top 12 highest-grossing movies of all time.
 
 ---
 
-## 📝 11. AI Development Disclosure
+## 📝 10. AI Development Disclosure
 This project was pair-programmed with **Antigravity**, an experimental AI coding agent. Together, we designed the modular tool architecture, implemented the ReAct loop from first principles, and developed the forensic audit runners to ensure reproducible excellence.
 
