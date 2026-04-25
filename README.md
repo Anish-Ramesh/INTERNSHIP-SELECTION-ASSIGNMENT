@@ -226,9 +226,9 @@ This implementation satisfies all core tasks (A-D) and includes several advanced
 | Bonus | Files & Logic | Purpose |
 | :--- | :--- | :--- |
 | **A: Strategic Reasoning** | [`agent/prompts.py`](agent/prompts.py) | Mandatory `[STRATEGIC BREAKDOWN]` before any action. |
-| **B: Operational Telemetry** | [`agent/bonus_features.py`](agent/bonus_features.py), [**tool_cost_analysis.md**](tool_cost_analysis.md) | Real-time tracking of latency and cost in USD & INR. |
+| **B: Operational Telemetry** | [`agent/bonus_features.py`](agent/bonus_features.py), [**tool_cost_analysis.md**](tool_cost_analysis.md) | Cost analysis in USD & INR. |
 | **C: Reflection & Recovery** | [`agent/bonus_features.py`](agent/bonus_features.py) | Self-critique turn that audits and fixes final answers. |
-| **D: Degradation Audit** | [`degradation_runner.py`](degradation_runner.py), [**Degradation_Audit_Report.md**](Degradation_Audit_Report.md) | Verified 100% accuracy retention under 50% data loss. |
+| **D: Degradation Audit** | [`degradation_runner.py`](degradation_runner.py), [**Degradation_Audit_Report.md**](Degradation_Audit_Report.md) | Testing model robustness and accuracy retention under 50% data loss. |
 
 ### **Novelty Features**
 - **Proactive Safety Gating**: Programmatic pre-processor for injection/jailbreak detection.
