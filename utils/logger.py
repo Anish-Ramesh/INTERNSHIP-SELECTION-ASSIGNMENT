@@ -59,30 +59,54 @@ class TraceLogger:
         if not self.current_trace:
             return
             
-        print("\n" + "#"*80)
-        print(f" QUESTION: {self.current_trace['question']}")
-        print("#"*80)
+        def print_box(content, title=None, width=100, border_char="═"):
+            top = "╔" + border_char * (width - 2) + "╗"
+            bottom = "╚" + border_char * (width - 2) + "╝"
+            side = "║"
+            
+            print(top)
+            if title:
+                print(f"{side} {title.center(width - 4)} {side}")
+                print("╟" + "─" * (width - 2) + "╢")
+            
+            for line in content.split("\n"):
+                # Handle long lines by wrapping
+                while len(line) > (width - 4):
+                    print(f"{side} {line[:width - 4]} {side}")
+                    line = line[width - 4:]
+                print(f"{side} {line.ljust(width - 4)} {side}")
+            print(bottom)
+
+        print("\n")
+        print_box(self.current_trace['question'], title="AGENT QUERY RECEIVED", border_char="━")
         
         for step in self.current_trace["steps"]:
-            # Truncate output slightly for terminal readability, but keep it generous 
+            # Truncate output slightly for terminal readability
             out_str = step['output']
             if len(out_str) > 1200:
                 out_str = out_str[:1200] + "\n... [TRUNCATED FOR READABILITY]"
             
-            print(f"\n[STEP {step['step_number']}] TOOL: {step['tool_name']}")
+            step_title = f"STEP {step['step_number']}: {step['tool_name']}"
+            step_content = ""
             if step.get('rationale'):
-                print(f"RATIONALE: {step['rationale'].strip()}")
-            print(f"INPUT: {step['input']}")
-            print(f"RESULT:\n{out_str}")
-            print("-" * 60)
+                step_content += f"THOUGHT: {step['rationale'].strip()}\n"
+                step_content += "─" * 40 + "\n"
+            step_content += f"INPUT: {step['input']}\n"
+            step_content += "─" * 40 + "\n"
+            step_content += f"OUTPUT:\n{out_str}"
             
-        print(f"\n" + "v " * 20 + " FINAL AGENT RESPONSE " + "v " * 20)
-        print(f"{self.current_trace['final_answer']}")
-        print("^ " * 20 + " END OF RESPONSE " + "^ " * 20)
-        
-        # Format citations simply as a comma separated list
+            print_box(step_content, title=step_title, width=100, border_char="─")
+            
+        final_answer = self.current_trace['final_answer'] or "No response generated."
         citations = ", ".join(self.current_trace.get("citations", [])) or "None"
-        print(f"\nCITATIONS: {citations}")
-        print(f"STEP COUNT: {self.current_trace['number_of_steps']} / 8 max")
-        print("#"*80 + "\n")
+        
+        status = "REFUSED (BUDGET EXCEEDED)" if self.current_trace.get('refused') else "SUCCESS"
+        footer_content = f"STATUS: {status}\n"
+        footer_content += f"CITATIONS: {citations}\n"
+        footer_content += f"STEP COUNT: {self.current_trace['number_of_steps']} / 8 max\n\n"
+        footer_content += "FINAL RESPONSE:\n" + "═" * 20 + "\n"
+        footer_content += final_answer
+        
+        print_box(footer_content, title="FINAL AGENT RESPONSE", width=100, border_char="━")
+        print("\n")
 

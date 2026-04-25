@@ -91,8 +91,8 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         logger = TraceLogger()
         logger.start_trace(question)
         logger.finish_trace(final_answer=refusal_reason, citations=[], refused=True)
-        print(f"\n[!] SAFETY ALERT: OFF-TOPIC OR SUSPICIOUS QUERY DETECTED.")
-        print(f"FINAL RESPONSE: {refusal_reason}")
+        # We use the logger's new boxed printer for consistency
+        logger.print_terminal_trace()
         return refusal_reason
 
     # 1. Check Cache
@@ -130,10 +130,13 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         UserMessage(content=question)
     ]
     
-    step_count = 0
-    max_steps = 8
+    step_count = 0  # Tracks individual TOOL CALLS
+    turn_count = 0  # Tracks total LLM interactions
+    max_steps = 8   # Max tool calls allowed
+    max_turns = 15  # Safety cap for total interactions
     
-    while step_count < max_steps:
+    while turn_count < max_turns:
+        turn_count += 1
         # Step Budget Awareness & Knowledge Consolidation
         remaining = max_steps - step_count
         
@@ -186,10 +189,10 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
             
             if "[FAIL]" in reflection and not context_state.get("has_reflected", False):
                 # If reflection fails, we add one emergency turn (Bonus C)
+                # We do NOT increment step_count here as this is a thinking turn, not a tool call
                 context_state["has_reflected"] = True
                 reflection_msg = f"[SELF-REFLECTION CRITIQUE]: {reflection}\n\nPlease use your tools to address these missing points or corrections before providing a FINAL answer."
                 messages.append(UserMessage(content=reflection_msg))
-                step_count += 1
                 continue # Trigger one more loop attempt
             
             if "[FAIL]" in reflection:
@@ -216,7 +219,9 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
             
             start_time = time.time()
             for tool_call in choice.message.tool_calls:
+                # Check hard cap BEFORE executing the tool
                 if step_count >= max_steps:
+                    # Budget exceeded - force immediate structured refusal
                     break
                     
                 tool_name = tool_call.function.name
@@ -295,10 +300,27 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
                 )
                 messages.append(ToolMessage(content=str(result), tool_call_id=tool_call.id))
                 step_count += 1
+            # Check again after processing all tool calls from this turn
+            if step_count >= max_steps:
+                break
         else:
             break
             
-    refusal_msg = "Could not find answer within 8 steps."
+    # Final fallback for any reason the loop terminated without a STOPPED choice
+    # If step_count hit the limit, we provide the structured refusal
+    refusal_msg = (
+        "╔════════════════════════════════════════════════════════════════════════════════╗\n"
+        "║                     STRICT REFUSAL: BUDGET EXCEEDED                            ║\n"
+        "╠════════════════════════════════════════════════════════════════════════════════╣\n"
+        "║ The agent has reached its hard limit of 8 tool calls. To ensure system         ║\n"
+        "║ stability and prevent infinite loops, execution has been terminated.           ║\n"
+        "║                                                                                ║\n"
+        "║ SYSTEM AUDIT:                                                                  ║\n"
+        "║ - Total Steps: 8/8                                                             ║\n"
+        "║ - Reason: Token/Reasoning Budget Exhausted                                     ║\n"
+        "║ - Status: Structured Termination Triggered                                     ║\n"
+        "╚════════════════════════════════════════════════════════════════════════════════╝"
+    )
     logger.set_telemetry(telemetry.get_summary())
     logger.finish_trace(final_answer=refusal_msg, citations=[], refused=True)
     logger.print_terminal_trace()
