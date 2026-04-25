@@ -260,6 +260,22 @@ As per the technical requirements, we have identified and documented the system'
 
 ---
 
-## 📝 9. AI Development Disclosure
+## 🛡️ 10. Operational Constraints & Resilience
+
+### **Hard Step Cap (8 Tool Calls)**
+The system enforces a strict **8-tool-call limit** to ensure operational stability and prevent infinite reasoning loops. This "hard cap" is a core architectural safeguard; if the agent cannot resolve a query within this budget, it is programmed to deliver a **Structured Refusal** rather than providing an ungrounded guess.
+
+### **Stress-Test Verification**
+The system's resilience can be verified using highly complex queries that exceed the reasoning budget. 
+
+**Example Edge Case:**
+```bash
+python agent/agent_loop.py "List the top 12 highest-grossing movies of all time. For each one, tell me the name of the lead actor and search the web to find out if that actor won an Oscar for that specific role."
+```
+**Expected Behavior**: The agent will utilize its full 8-step budget and then trigger a **STRICT REFUSAL: BUDGET EXCEEDED** terminal box.
+
+---
+
+## 📝 11. AI Development Disclosure
 This project was pair-programmed with **Antigravity**, an experimental AI coding agent. Together, we designed the modular tool architecture, implemented the ReAct loop from first principles, and developed the forensic audit runners to ensure reproducible excellence.
 
