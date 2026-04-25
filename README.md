@@ -252,7 +252,7 @@ Full 20-question traces and forensic failure analysis can be found in **[EVALUAT
 
 ---
 
-## 💻 7. Developer Guide (Setup & Usage)
+## 💻 8. Developer Guide (Setup & Usage)
 
 ### **One-Step Installation**
 The project includes an automated setup pipeline that handles virtual environments and data preprocessing:
@@ -279,7 +279,7 @@ TAVILY_API_KEY=your_key_here
 
 ---
 
-## ⚠️ 8. Honest Assessment: Failure Modes
+## ⚠️ 9. Honest Assessment: Failure Modes
 
 As per the technical requirements, we have identified and documented the system's "Breaking Points":
 1. **Helpfulness Drift**: In refusal cases (like recipes), the agent sometimes provides general trends before stating it cannot fulfill the request due to the base model's helpfulness bias.
@@ -288,7 +288,7 @@ As per the technical requirements, we have identified and documented the system'
 
 ---
 
-## 🛡️ 9. Operational Constraints & Resilience
+## 🛡️ 10. Operational Constraints & Resilience
 
 ### **Hard Step Cap (8 Tool Calls)**
 The system enforces a strict **8-tool-call limit** to ensure operational stability and prevent infinite reasoning loops. This "hard cap" is a core architectural safeguard; if the agent cannot resolve a query within this budget, it is programmed to deliver a **Structured Refusal** rather than providing an ungrounded guess.
@@ -304,6 +304,6 @@ python agent/agent_loop.py "List the top 12 highest-grossing movies of all time.
 
 ---
 
-## 📝 10. AI Development Disclosure
+## 📝 11. AI Development Disclosure
 This project was pair-programmed with **Antigravity**, an experimental AI coding agent. Together, we designed the modular tool architecture, implemented the ReAct loop from first principles, and developed the forensic audit runners to ensure reproducible excellence.
 
