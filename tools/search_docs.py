@@ -115,7 +115,8 @@ class DocSearchTool:
                 return "No documents found for the requested movie in the corpus."
         
         if not matched_movies:
-            return "Movie not found in dataset. Please refine your query with a specific movie title from the corpus."
+            inventory = f"[LOCAL CORPUS INVENTORY]: {', '.join(sorted(self.known_movies))}"
+            return f"{inventory}\n\nMovie not found in dataset. Please refine your query with a specific movie title from the inventory."
 
         # Step 2: Filter documents for the matched movies
         filtered_docs = []
@@ -126,7 +127,8 @@ class DocSearchTool:
                 filtered_meta.append(self.metadata[i])
 
         if not filtered_docs:
-            return "No documents found for matching movie."
+            inventory = f"[LOCAL CORPUS INVENTORY]: {', '.join(sorted(self.known_movies))}"
+            return f"{inventory}\n\nNo documents found for matching movie."
 
         # Step 3: Run BM25 on the filtered set
         tokenized_corpus = [tokenize(doc) for doc in filtered_docs]
@@ -182,12 +184,21 @@ class DocSearchTool:
                 break
         
         if not results:
-            return "No relevant snippets found for the query within the selected movie's documents."
+            return f"[LOCAL CORPUS INVENTORY]: {', '.join(sorted(self.known_movies))}\n\nNo relevant snippets found for the query within the selected movie's documents."
             
-        return "\n\n---\n\n".join(results)
+        inventory_hint = f"[LOCAL CORPUS INVENTORY]: {', '.join(sorted(self.known_movies))}\n\n"
+        return inventory_hint + "\n\n---\n\n".join(results)
 
 # Convenience wrapper
 _doc_search_tool_instance = None
+
+def get_available_titles(query: str = "") -> str:
+    """Returns a comma-separated list of all movies currently present in the local document corpus."""
+    global _doc_search_tool_instance
+    if _doc_search_tool_instance is None:
+        _doc_search_tool_instance = DocSearchTool()
+    return ", ".join(sorted(_doc_search_tool_instance.known_movies))
+
 def search_docs(query: str) -> str:
     """
     Search through movie reviews for qualitative information.

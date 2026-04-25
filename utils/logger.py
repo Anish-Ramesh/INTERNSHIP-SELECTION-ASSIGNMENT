@@ -110,3 +110,22 @@ class TraceLogger:
         print_box(footer_content, title="FINAL AGENT RESPONSE", width=100, border_char="━")
         print("\n")
 
+    def print_thinking_box(self, rationale: str):
+        """Prints a standalone thinking box for real-time turn tracking."""
+        def print_box(content, title=None, width=100, border_char="═"):
+            top = "╔" + border_char * (width - 2) + "╗"
+            bottom = "╚" + border_char * (width - 2) + "╝"
+            side = "║"
+            print(top)
+            if title:
+                print(f"{side} {title.center(width - 4)} {side}")
+                print("╟" + "─" * (width - 2) + "╢")
+            for line in content.split("\n"):
+                while len(line) > (width - 4):
+                    print(f"{side} {line[:width - 4]} {side}")
+                    line = line[width - 4:]
+                print(f"{side} {line.ljust(width - 4)} {side}")
+            print(bottom)
+
+        print_box(rationale.strip(), title="THOUGHT TRACE", width=100, border_char="░")
+

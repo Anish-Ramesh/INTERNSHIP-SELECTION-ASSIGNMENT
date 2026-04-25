@@ -11,13 +11,13 @@ TOOLS = [
      ChatCompletionsToolDefinition(
          function=FunctionDefinition(
              name="search_docs",
-             description="Semantic search over unstructured documents (movie reviews). Use this for subjective opinions, themes, explanations, or questions about the plot. DO NOT Use for numerical data.",
+             description="Semantic search over unstructured documents (movie reviews). Use this ONLY for movies confirmed to be in the [LOCAL CORPUS INVENTORY]. DO NOT use for numerical data.",
              parameters={
                  "type": "object",
                  "properties": {
                      "query": {
                          "type": "string",
-                         "description": "Natural language query string."
+                         "description": "Natural language query string including movie title."
                      }
                  },
                  "required": ["query"]
@@ -27,7 +27,7 @@ TOOLS = [
      ChatCompletionsToolDefinition(
          function=FunctionDefinition(
              name="query_data",
-             description="Query the structured financial / stats table for movies. The table contains the following columns: [title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score]. Use this for numbers, rankings, or comparisons of these fields.",
+             description="Query the structured financial / stats table for movies. The table contains the following columns: [title, year, genre, budget, opening_weekend, worldwide_gross, rotten_tomatoes_score]. Select ONLY necessary columns to avoid context bloating.",
              parameters={
                  "type": "object",
                  "properties": {
@@ -43,7 +43,7 @@ TOOLS = [
      ChatCompletionsToolDefinition(
          function=FunctionDefinition(
              name="web_search",
-             description="Search the live web for recent information (e.g. recent awards news, director updates).",
+             description="Search the live web for recent information or as a fallback if local docs/SQL are insufficient. Limit to 2 calls per query.",
              parameters={
                  "type": "object",
                  "properties": {

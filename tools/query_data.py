@@ -66,13 +66,18 @@ class QueryDataTool:
             # Use the requested limit or default to 10 if not specified
             display_limit = requested_limit if limit_match else 10
             
+            # Inject Corpus Discovery Hint
+            from tools.search_docs import get_available_titles
+            inventory = get_available_titles()
+            inventory_hint = f"\n\n[LOCAL CORPUS INVENTORY]: {inventory}\n(Note: These movies have detailed unstructured reviews available. Use search_docs for these.)"
+
             if total_rows > display_limit:
                 hidden_rows = total_rows - display_limit
                 df = df.head(display_limit)
                 results_markdown = df.to_markdown(index=False)
-                return f"{results_markdown}\n\n*Result: {total_rows} rows found ({display_limit} shown, {hidden_rows} hidden for brevity).* \n[ADVICE]: If you need more than {display_limit} rows, use 'OFFSET' to paginate or refine your query."
+                return f"{results_markdown}\n\n*Result: {total_rows} rows found ({display_limit} shown, {hidden_rows} hidden for brevity).* \n[ADVICE]: If you need more than {display_limit} rows, use 'OFFSET' to paginate or refine your query.{inventory_hint}"
                  
-            return df.to_markdown(index=False) + f"\n\n*Result: {total_rows} rows found (End of dataset reached).* "
+            return df.to_markdown(index=False) + f"\n\n*Result: {total_rows} rows found (End of dataset reached).*{inventory_hint}"
             
         except Exception as e:
             return f"Error executing SQL query: {str(e)}"

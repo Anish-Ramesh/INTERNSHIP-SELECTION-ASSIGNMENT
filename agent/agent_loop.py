@@ -174,6 +174,10 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         
         choice = response.choices[0]
         
+        # Real-time Rationale Print (The Think Trace)
+        if choice.message.content:
+            logger.print_thinking_box(choice.message.content)
+        
         if choice.finish_reason == CompletionsFinishReason.STOPPED or (choice.message.content and not choice.message.tool_calls):
             # Clean reasoning blocks before logging and returning
             final_answer = clean_final_answer(choice.message.content)
