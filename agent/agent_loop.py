@@ -1,5 +1,6 @@
 import sys
 import os
+import datetime
 # Add project root to sys.path for direct script execution
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -125,8 +126,9 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         "web_calls_count": 0
     }
     
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT),
+        SystemMessage(content=f"{SYSTEM_PROMPT}\n\nCURRENT DATE: {current_date}"),
         UserMessage(content=question)
     ]
     
@@ -174,10 +176,6 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
         
         choice = response.choices[0]
         
-        # Real-time Rationale Print (The Think Trace)
-        if choice.message.content:
-            logger.print_thinking_box(choice.message.content)
-        
         if choice.finish_reason == CompletionsFinishReason.STOPPED or (choice.message.content and not choice.message.tool_calls):
             # Clean reasoning blocks before logging and returning
             final_answer = clean_final_answer(choice.message.content)
@@ -219,6 +217,10 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
             return final_answer
             
         elif choice.finish_reason == CompletionsFinishReason.TOOL_CALLS:
+            # Real-time Rationale Print (The Think Trace) - Only for intermediate steps
+            if choice.message.content:
+                logger.print_thinking_box(choice.message.content)
+            
             messages.append(choice.message)
             
             start_time = time.time()
@@ -333,9 +335,23 @@ def run_agent(question: str, bypass_cache: bool = False, cache_path: str = None)
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
-        query = " ".join(sys.argv[1:])
+        # Check for cache bypass flag
+        bypass = False
+        args = sys.argv[1:]
+        if "--no-cache" in args:
+            bypass = True
+            args.remove("--no-cache")
+        elif "--bypass-cache" in args:
+            bypass = True
+            args.remove("--bypass-cache")
+            
+        query = " ".join(args).strip()
+        if not query:
+            print("Error: No query provided.")
+            sys.exit(1)
+            
         print(f"Question: {query}")
-        ans = run_agent(query)
+        ans = run_agent(query, bypass_cache=bypass)
         # Trace saved to evaluation/logs/ (printed inside run_agent)
     else:
         print("\n" + "="*50)
